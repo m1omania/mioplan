@@ -1,7 +1,10 @@
-import React from 'react';
-import TaskCard from './TaskCard';
+import React, { useState } from 'react';
+import MatrixCell from './MatrixCell';
+import BulkTaskSelector from './BulkTaskSelector';
 
-const Matrix = ({ tasks }) => {
+const Matrix = ({ tasks, onTaskMove }) => {
+  const [bulkMoveTasks, setBulkMoveTasks] = useState([]);
+
   // Группируем задачи по важности и сложности
   const groupedTasks = {
     'high-high': tasks.filter(task => task.importance === 'high' && task.complexity === 'high'),
@@ -30,79 +33,104 @@ const Matrix = ({ tasks }) => {
 
   // Определяем CSS классы для ячеек матрицы
   const getCellClasses = (importance, complexity) => {
-    return \`matrix-cell \${importance}-important \${complexity}-complexity\`;
+    return "matrix-cell " + importance + "-important " + complexity + "-complexity";
+  };
+
+  const handleBulkMove = (taskIds, importance, complexity) => {
+    taskIds.forEach(taskId => {
+      onTaskMove(taskId, importance, complexity);
+    });
   };
 
   return (
     <div className="matrix-container">
       <div className="matrix-header">
         <h2>Матрица задач по важности и сложности</h2>
+        <BulkTaskSelector tasks={tasks} onBulkMove={handleBulkMove} />
       </div>
 
       {/* Строка "Важно" */}
       <div className="matrix-row">
-        <div className={getCellClasses('high', 'high')}>
-          <div className="cell-header">{cellTitles['high-high']}</div>
-          {groupedTasks['high-high'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-        <div className={getCellClasses('high', 'medium')}>
-          <div className="cell-header">{cellTitles['high-medium']}</div>
-          {groupedTasks['high-medium'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-        <div className={getCellClasses('high', 'low')}>
-          <div className="cell-header">{cellTitles['high-low']}</div>
-          {groupedTasks['high-low'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
+        <MatrixCell 
+          importance="high" 
+          complexity="high" 
+          title={cellTitles['high-high']}
+          tasks={groupedTasks['high-high']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('high', 'high')}
+        />
+        <MatrixCell 
+          importance="high" 
+          complexity="medium" 
+          title={cellTitles['high-medium']}
+          tasks={groupedTasks['high-medium']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('high', 'medium')}
+        />
+        <MatrixCell 
+          importance="high" 
+          complexity="low" 
+          title={cellTitles['high-low']}
+          tasks={groupedTasks['high-low']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('high', 'low')}
+        />
       </div>
 
       {/* Строка "Средне" */}
       <div className="matrix-row">
-        <div className={getCellClasses('medium', 'high')}>
-          <div className="cell-header">{cellTitles['medium-high']}</div>
-          {groupedTasks['medium-high'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-        <div className={getCellClasses('medium', 'medium')}>
-          <div className="cell-header">{cellTitles['medium-medium']}</div>
-          {groupedTasks['medium-medium'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-        <div className={getCellClasses('medium', 'low')}>
-          <div className="cell-header">{cellTitles['medium-low']}</div>
-          {groupedTasks['medium-low'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
+        <MatrixCell 
+          importance="medium" 
+          complexity="high" 
+          title={cellTitles['medium-high']}
+          tasks={groupedTasks['medium-high']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('medium', 'high')}
+        />
+        <MatrixCell 
+          importance="medium" 
+          complexity="medium" 
+          title={cellTitles['medium-medium']}
+          tasks={groupedTasks['medium-medium']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('medium', 'medium')}
+        />
+        <MatrixCell 
+          importance="medium" 
+          complexity="low" 
+          title={cellTitles['medium-low']}
+          tasks={groupedTasks['medium-low']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('medium', 'low')}
+        />
       </div>
 
       {/* Строка "Минимум" */}
       <div className="matrix-row">
-        <div className={getCellClasses('low', 'high')}>
-          <div className="cell-header">{cellTitles['low-high']}</div>
-          {groupedTasks['low-high'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-        <div className={getCellClasses('low', 'medium')}>
-          <div className="cell-header">{cellTitles['low-medium']}</div>
-          {groupedTasks['low-medium'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
-        <div className={getCellClasses('low', 'low')}>
-          <div className="cell-header">{cellTitles['low-low']}</div>
-          {groupedTasks['low-low'].map(task => (
-            <TaskCard key={task.id} task={task} />
-          ))}
-        </div>
+        <MatrixCell 
+          importance="low" 
+          complexity="high" 
+          title={cellTitles['low-high']}
+          tasks={groupedTasks['low-high']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('low', 'high')}
+        />
+        <MatrixCell 
+          importance="low" 
+          complexity="medium" 
+          title={cellTitles['low-medium']}
+          tasks={groupedTasks['low-medium']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('low', 'medium')}
+        />
+        <MatrixCell 
+          importance="low" 
+          complexity="low" 
+          title={cellTitles['low-low']}
+          tasks={groupedTasks['low-low']}
+          onTaskMove={onTaskMove}
+          cellClass={getCellClasses('low', 'low')}
+        />
       </div>
     </div>
   );

@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { fetchKaitenTasks } from './api/kaitenApi';
 import Matrix from './components/Matrix';
+import TimelineView from './components/Timeline';
+import TimelineControls from './components/TimelineControls';
+import ViewToggle from './components/ViewToggle';
 import Settings from './components/Settings';
+import { HistoryProvider } from './components/HistoryManager';
 import './App.css';
 
 function App() {
@@ -14,20 +20,43 @@ function App() {
     boardId: ''
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [view, setView] = useState('matrix'); // 'matrix' или 'timeline'
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState({
+    sectors: []
+  });
 
   // Проверяем, есть ли сохраненные настройки API
   useEffect(() => {
     const savedConfig = localStorage.getItem('kaitenApiConfig');
     if (savedConfig) {
-      setApiConfig(JSON.parse(savedConfig));
+      try {
+        const parsedConfig = JSON.parse(savedConfig);
+        console.log('Загружены сохраненные настройки API:', parsedConfig);
+        setApiConfig(parsedConfig);
+      } catch (e) {
+        console.error('Ошибка при разборе сохраненных настроек:', e);
+        localStorage.removeItem('kaitenApiConfig');
+      }
+    } else {
+      console.log('Сохраненные настройки API не найдены');
     }
   }, []);
 
+  // Сохраняем состояние в истории при изменении задач
+  useEffect(() => {
+    // Здесь будет логика сохранения состояния в историю
+    // Пока оставим пустым, так как компонент HistoryManager будет интегрирован позже
+  }, [tasks]);
+
   // Загружаем задачи при изменении конфигурации API
   useEffect(() => {
+    console.log('Проверка конфигурации API:', apiConfig);
     if (apiConfig.baseUrl && apiConfig.apiKey && apiConfig.boardId) {
+      console.log('Конфигурация API заполнена, загружаем задачи');
       loadTasks();
     } else {
+      console.log('Конфигурация API не заполнена, используем моковые данные');
       // Если нет конфигурации, используем моковые данные
       setMockTasks();
     }
@@ -38,11 +67,21 @@ function App() {
     setError(null);
 
     try {
+      console.log('Начинаем загрузку задач с конфигурацией:', apiConfig);
       const data = await fetchKaitenTasks(apiConfig);
-      setTasks(data);
+      console.log('Задачи успешно загружены:', data);
+      // Если API вернул пустой массив, используем моковые данные
+      if (Array.isArray(data) && data.length === 0) {
+        console.log('API вернул пустой массив задач, используем моковые данные');
+        setMockTasks();
+      } else {
+        setTasks(data);
+      }
     } catch (err) {
-      setError(`Ошибка загрузки задач: ${err.message}`);
+      console.error('Ошибка при загрузке задач:', err);
+      setError('Ошибка загрузки задач: ' + err.message);
       // В случае ошибки используем моковые данные
+      console.log('Используем моковые данные из-за ошибки');
       setMockTasks();
     } finally {
       setLoading(false);
@@ -131,56 +170,159 @@ function App() {
   };
 
   const handleRefresh = () => {
+    console.log('Обновление задач, конфигурация API:', apiConfig);
     if (apiConfig.baseUrl && apiConfig.apiKey && apiConfig.boardId) {
+      console.log('Загружаем задачи с API');
       loadTasks();
     } else {
+      console.log('Конфигурация API не заполнена, обновляем моковые данные');
       setMockTasks();
     }
   };
 
   const handleSaveConfig = (config) => {
+    console.log('Сохранение настроек API:', config);
     setApiConfig(config);
-    localStorage.setItem('kaitenApiConfig', JSON.stringify(config));
+    try {
+      localStorage.setItem('kaitenApiConfig', JSON.stringify(config));
+      console.log('Настройки успешно сохранены в localStorage');
+    } catch (e) {
+      console.error('Ошибка при сохранении настроек в localStorage:', e);
+    }
     setShowSettings(false);
   };
 
+  const handleTaskMove = (taskId, newImportance, newComplexity) => {
+    console.log(`Перемещение задачи ${taskId} в категорию важности: ${newImportance}, сложности: ${newComplexity}`);
+
+    // Обновляем задачу в массиве задач
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === taskId
+          ? { ...task, importance: newImportance, complexity: newComplexity }
+          : task
+      )
+    );
+  };
+
+  const handleTaskUpdate = (updatedTask) => {
+    console.log('Обновление задачи:', updatedTask);
+
+    setTasks(prevTasks =>
+      prevTasks.map(task =>
+        task.id === updatedTask.id
+          ? { ...task, ...updatedTask }
+          : task
+      )
+    );
+  };
+
+  const handleTaskDelete = (taskId) => {
+    console.log('Удаление задачи:', taskId);
+    
+    setTasks(prevTasks => 
+      prevTasks.filter(task => task.id !== taskId)
+    );
+  };
+
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+  };
+
+  const handleFiltersChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
+  const handleExport = () => {
+    console.log('Экспорт таймлайна');
+    // TODO: Реализовать экспорт в PDF/PNG
+  };
+
+  // Фильтрация задач для таймлайна
+  const filteredTasks = useMemo(() => {
+    let result = tasks;
+    
+    // Поиск по названию и описанию
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(task => 
+        task.title.toLowerCase().includes(term) || 
+        (task.description && task.description.toLowerCase().includes(term))
+      );
+    }
+    
+    // Фильтрация по секторам
+    if (filters.sectors.length > 0) {
+      result = result.filter(task => 
+        filters.sectors.includes(`${task.importance}-${task.complexity}`)
+      );
+    }
+    
+    return result;
+  }, [tasks, searchTerm, filters]);
+
   return (
-    <div className="container">
-      <header>
-        <h1>Матрица задач Kaiten</h1>
-        <div>
-          <button 
-            className="refresh-button" 
-            onClick={() => setShowSettings(!showSettings)}
-          >
-            Настройки API
-          </button>
-          <button 
-            className="refresh-button" 
-            onClick={handleRefresh}
-            style={{ marginLeft: '10px' }}
-          >
-            Обновить
-          </button>
+    <DndProvider backend={HTML5Backend}>
+      <HistoryProvider initialState={tasks}>
+        <div className="App">
+          <header className="app-header">
+            <h1>Kaiten Matrix</h1>
+            <div className="header-controls">
+              <button onClick={handleRefresh} disabled={loading}>
+                {loading ? 'Загрузка...' : 'Обновить'}
+              </button>
+              <button onClick={() => setShowSettings(true)}>Настройки API</button>
+            </div>
+          </header>
+
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="loading">Загрузка задач...</div>
+          ) : (
+            <>
+              {showSettings ? (
+                <Settings 
+                  config={apiConfig} 
+                  onSave={handleSaveConfig} 
+                  onCancel={() => setShowSettings(false)} 
+                />
+              ) : (
+                <>
+                  <ViewToggle view={view} onViewChange={setView} />
+                  {view === 'matrix' ? (
+                    <Matrix 
+                      tasks={tasks} 
+                      onTaskMove={handleTaskMove} 
+                    />
+                  ) : (
+                    <div className="timeline-wrapper">
+                      <TimelineControls
+                        searchTerm={searchTerm}
+                        onSearchChange={handleSearchChange}
+                        filters={filters}
+                        onFiltersChange={handleFiltersChange}
+                        onExport={handleExport}
+                      />
+                      <TimelineView 
+                        tasks={filteredTasks} 
+                        onTaskUpdate={handleTaskUpdate}
+                        onTaskDelete={handleTaskDelete}
+                      />
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
         </div>
-      </header>
-
-      {showSettings && (
-        <Settings 
-          initialConfig={apiConfig} 
-          onSave={handleSaveConfig} 
-          onCancel={() => setShowSettings(false)} 
-        />
-      )}
-
-      {error && <div className="error">{error}</div>}
-
-      {loading ? (
-        <div className="loading">Загрузка задач...</div>
-      ) : (
-        <Matrix tasks={tasks} />
-      )}
-    </div>
+      </HistoryProvider>
+    </DndProvider>
   );
 }
 

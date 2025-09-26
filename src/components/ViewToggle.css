@@ -1,0 +1,33 @@
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.toggle-button {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.toggle-button:first-child {
+  border-radius: 4px 0 0 4px;
+  border-right: none;
+}
+
+.toggle-button:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.toggle-button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.toggle-button:hover:not(.active) {
+  background-color: #e9ecef;
+}

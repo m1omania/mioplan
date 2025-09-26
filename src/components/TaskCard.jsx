@@ -22,7 +22,7 @@ const TaskCard = ({ task }) => {
   };
 
   return (
-    <div className={`task-card ${getImportanceClass(task.importance)} ${getComplexityClass(task.complexity)}`}>
+    <div className={'task-card ' + getImportanceClass(task.importance) + ' ' + getComplexityClass(task.complexity)}>
       <div className="task-title">{task.title}</div>
       <div className="task-description">{task.description}</div>
       {task.tags && task.tags.length > 0 && (
