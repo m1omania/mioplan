@@ -222,6 +222,32 @@
     sans-serif;
 }
 
+/* Стили для разных уровней важности */
+div.timeline-item.high-important {
+  background-color: #ffeef0 !important;
+}
+
+div.timeline-item.medium-important {
+  background-color: #fff8e5 !important;
+}
+
+div.timeline-item.low-important {
+  background-color: #f0f9ff !important;
+}
+
+/* Стили для разных уровней сложности */
+div.timeline-item.high-complexity {
+  border-left: 4px solid #d73a49 !important;
+}
+
+div.timeline-item.medium-complexity {
+  border-left: 4px solid #fbca04 !important;
+}
+
+div.timeline-item.low-complexity {
+  border-left: 4px solid #28a745 !important;
+}
+
 .timeline-item-content {
   padding: 8px;
   height: 100%;
@@ -281,7 +307,7 @@
 
 .timeline-item-description {
   font-size: 12px;
-  color: #555;
+  color: #586069;
   margin-bottom: 4px;
   word-break: break-word;
   overflow-wrap: break-word;
@@ -300,11 +326,11 @@
 }
 
 .timeline-item-tag {
-  background-color: #e0e0e0;
+  background-color: #e1e4e8;
   border-radius: 10px;
   padding: 2px 8px;
   font-size: 10px;
-  color: #666;
+  color: #586069;
 }
 
 .resize-left-handle, .resize-right-handle {

@@ -267,12 +267,26 @@ function App() {
       <HistoryProvider initialState={tasks}>
         <div className="App">
           <header className="app-header">
-            <h1>Kaiten Matrix</h1>
+            <div className="app-header-content">
+              <h1>Kaiten Matrix</h1>
+              <ViewToggle view={view} onViewChange={setView} />
+            </div>
             <div className="header-controls">
-              <button onClick={handleRefresh} disabled={loading}>
-                {loading ? 'Загрузка...' : 'Обновить'}
+              <button 
+                onClick={handleRefresh} 
+                disabled={loading}
+                className="icon-button"
+                title="Обновить данные"
+              >
+                {loading ? 'Загрузка...' : '🔄'}
               </button>
-              <button onClick={() => setShowSettings(true)}>Настройки API</button>
+              <button 
+                onClick={() => setShowSettings(!showSettings)} 
+                className="icon-button" 
+                title={showSettings ? "Закрыть настройки" : "Настройки API"}
+              >
+                ⚙️
+              </button>
             </div>
           </header>
 
@@ -294,7 +308,6 @@ function App() {
                 />
               ) : (
                 <>
-                  <ViewToggle view={view} onViewChange={setView} />
                   {view === 'matrix' ? (
                     <Matrix 
                       tasks={tasks} 

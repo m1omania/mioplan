@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import MatrixCell from './MatrixCell';
-import BulkTaskSelector from './BulkTaskSelector';
 
 const Matrix = ({ tasks, onTaskMove }) => {
-  const [bulkMoveTasks, setBulkMoveTasks] = useState([]);
-
   // Группируем задачи по важности и сложности
   const groupedTasks = {
     'high-high': tasks.filter(task => task.importance === 'high' && task.complexity === 'high'),
@@ -36,18 +33,9 @@ const Matrix = ({ tasks, onTaskMove }) => {
     return "matrix-cell " + importance + "-important " + complexity + "-complexity";
   };
 
-  const handleBulkMove = (taskIds, importance, complexity) => {
-    taskIds.forEach(taskId => {
-      onTaskMove(taskId, importance, complexity);
-    });
-  };
 
   return (
     <div className="matrix-container">
-      <div className="matrix-header">
-        <h2>Матрица задач по важности и сложности</h2>
-        <BulkTaskSelector tasks={tasks} onBulkMove={handleBulkMove} />
-      </div>
 
       {/* Строка "Важно" */}
       <div className="matrix-row">

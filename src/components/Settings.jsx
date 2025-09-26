@@ -1,19 +1,23 @@
 import React, { useState } from 'react';
 
-const Settings = ({ initialConfig, onSave, onCancel }) => {
-  const [config, setConfig] = useState(initialConfig);
+const Settings = ({ config, onSave, onCancel }) => {
+  const [formData, setFormData] = useState({
+    baseUrl: config?.baseUrl || '',
+    apiKey: config?.apiKey || '',
+    boardId: config?.boardId || ''
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setConfig(prevConfig => ({
-      ...prevConfig,
+    setFormData(prevData => ({
+      ...prevData,
       [name]: value
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(config);
+    onSave(formData);
   };
 
   return (
@@ -26,7 +30,7 @@ const Settings = ({ initialConfig, onSave, onCancel }) => {
             type="text"
             id="baseUrl"
             name="baseUrl"
-            value={config.baseUrl}
+            value={formData.baseUrl}
             onChange={handleChange}
             placeholder="https://yourcompany.kaiten.ru"
             required
@@ -38,7 +42,7 @@ const Settings = ({ initialConfig, onSave, onCancel }) => {
             type="password"
             id="apiKey"
             name="apiKey"
-            value={config.apiKey}
+            value={formData.apiKey}
             onChange={handleChange}
             placeholder="Введите ваш API ключ"
             required
@@ -50,7 +54,7 @@ const Settings = ({ initialConfig, onSave, onCancel }) => {
             type="number"
             id="boardId"
             name="boardId"
-            value={config.boardId}
+            value={formData.boardId}
             onChange={handleChange}
             placeholder="ID доски в Kaiten"
             required

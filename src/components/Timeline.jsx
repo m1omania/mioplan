@@ -35,25 +35,24 @@ const TimelineView = ({ tasks, onTaskUpdate, onTaskDelete }) => {
       const endDate = task.endDate ? moment(task.endDate) : moment().add(1, 'week').startOf('day');
       
       return {
-        id: task.id,
-        group: `${task.importance}-${task.complexity}`,
-        title: task.title,
+        ...task,
         start_time: startDate,
         end_time: endDate,
-        importance: task.importance,
-        complexity: task.complexity,
-        description: task.description,
-        tags: task.tags
+        group: `${task.importance}-${task.complexity}`
       };
     });
   }, [tasks]);
 
   // Обработчик изменения элемента на таймлайне
   const handleItemMove = (itemId, dragTime, newGroupOrder) => {
+    const item = items.find(i => i.id === itemId);
+    if (!item) return;
+    
     const groupId = groups[newGroupOrder].id;
     const [importance, complexity] = groupId.split('-');
     
     const updatedTask = {
+      ...item,
       id: itemId,
       startDate: moment(dragTime),
       endDate: moment(dragTime).add(1, 'week'), // По умолчанию продолжительность 1 неделя

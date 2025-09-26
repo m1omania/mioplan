@@ -6,9 +6,22 @@ const CustomTimelineItem = ({ item, timelineContext, itemContext, getItemProps, 
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   
-  // Определяем классы стилей в зависимости от важности и сложности
-  const getSectorClass = (importance, complexity) => {
-    return `sector-${importance}-${complexity}`;
+  const getImportanceClass = (importance) => {
+    switch (importance) {
+      case 'high': return 'high-important';
+      case 'medium': return 'medium-important';
+      case 'low': return 'low-important';
+      default: return '';
+    }
+  };
+
+  const getComplexityClass = (complexity) => {
+    switch (complexity) {
+      case 'high': return 'high-complexity';
+      case 'medium': return 'medium-complexity';
+      case 'low': return 'low-complexity';
+      default: return '';
+    }
   };
 
   const getSectorLabel = (importance, complexity) => {
@@ -51,7 +64,6 @@ const CustomTimelineItem = ({ item, timelineContext, itemContext, getItemProps, 
       <div
         {...getItemProps({
           style: {
-            backgroundColor: itemContext.selected ? 'rgba(168, 216, 234, 0.8)' : 'white',
             color: 'black',
             border: '1px solid #ccc',
             borderRadius: '4px',
@@ -60,9 +72,10 @@ const CustomTimelineItem = ({ item, timelineContext, itemContext, getItemProps, 
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-          },
+            backgroundColor: 'transparent' // Убираем принудительный цвет фона
+          }
         })}
-        className={`timeline-item ${getSectorClass(item.importance, item.complexity)}`}
+        className={`timeline-item ${getImportanceClass(item.importance)} ${getComplexityClass(item.complexity)}`}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseMove={handleMouseMove}
