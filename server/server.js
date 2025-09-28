@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5176',
+  origin: ['http://localhost:5176', 'https://mioplan.vercel.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -87,7 +87,9 @@ app.get('/api/kaiten/cards', async (req, res) => {
     }
     
     const baseUrl = base_url || 'https://api.kaiten.ru';
-    const url = `${baseUrl}/v1/cards?board_id=${board_id}`;
+    // Удаляем завершающий слэш, если он есть, чтобы избежать двойного слэша
+    const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    const url = `${cleanBaseUrl}/v1/cards?board_id=${board_id}`;
     
     console.log(`Proxying request to: ${url}`);
     
