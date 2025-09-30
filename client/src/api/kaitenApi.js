@@ -2,19 +2,8 @@ import axios from 'axios';
 
 // Функция для получения задач из Kaiten API
 export const fetchKaitenTasks = async (config) => {
-  let { baseUrl, apiKey, boardId } = config;
-
-  // Автоматическая коррекция URL для Kaiten API
-  if (baseUrl) {
-    // Если пользователь ввел URL веб-интерфейса, корректируем его на API URL
-    if (baseUrl.includes('ux.kaiten.ru')) {
-      baseUrl = 'https://api.kaiten.ru';
-    }
-    // Удаляем завершающий слэш, если он есть
-    baseUrl = baseUrl.replace(/\/$/, '');
-  }
-
-  console.log('Попытка подключения к Kaiten API:', { baseUrl, boardId });
+  const { baseUrl, apiKey, boardId } = config;
+  console.log('fetchKaitenTasks called with config:', { baseUrl, apiKey: '***', boardId });
 
   try {
     // Создаем экземпляр axios с базовыми настройками
@@ -34,22 +23,23 @@ export const fetchKaitenTasks = async (config) => {
     });
 
     // Получаем все карточки с доски через наш сервер
-    console.log('Отправка запроса к API...');
+    console.log('Sending request to our server API...');
     const response = await api.get(`/kaiten/cards?board_id=${boardId}&base_url=${encodeURIComponent(baseUrl || 'https://api.kaiten.ru')}&api_key=${encodeURIComponent(apiKey)}`);
     
-    console.log('Ответ от API получен:', response.data);
+    console.log('Received response from our server:', response.status, response.statusText);
+    console.log('Response data type:', typeof response.data);
+    console.log('Response data keys:', Object.keys(response.data));
 
     // Проверяем, что ответ содержит массив карточек
     if (!Array.isArray(response.data)) {
-      console.error('Ответ от API не является массивом:', response.data);
+      console.error('Response data is not an array:', response.data);
       throw new Error('Некорректный формат ответа от API');
     }
 
     // Преобразуем данные в нужный формат
+    console.log(`Processing ${response.data.length} cards...`);
     const tasks = response.data.map(card => {
-      console.log('Обработка карточки:', card);
-      console.log('Все поля карточки:', Object.keys(card));
-      console.log('Значение description_filled:', card.description_filled);
+      console.log('Processing card:', card.id, card.title);
       
       // Определяем важность на основе свойств карточки
       let importance = 'medium';
@@ -100,13 +90,13 @@ export const fetchKaitenTasks = async (config) => {
       };
     });
 
-    console.log('Задачи успешно обработаны:', tasks);
+    console.log('Successfully processed tasks:', tasks.length);
     return tasks;
   } catch (error) {
-    console.error('Ошибка при получении задач из Kaiten API:', error);
+    console.error('Error in fetchKaitenTasks:', error);
     if (error.response) {
-      console.error('Статус ошибки:', error.response.status);
-      console.error('Данные ошибки:', error.response.data);
+      console.error('Response error details - status:', error.response.status);
+      console.error('Response error details - data:', error.response.data);
     }
     
     // Формируем более информативное сообщение об ошибке

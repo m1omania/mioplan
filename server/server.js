@@ -88,18 +88,19 @@ app.get('/api/kaiten/cards', async (req, res) => {
   try {
     const { board_id, base_url, api_key } = req.query;
 
+    console.log('Received request with parameters:', { board_id, base_url, api_key });
+
     if (!board_id || !api_key) {
+      console.log('Missing required parameters');
       return res.status(400).json({ error: 'board_id and api_key are required' });
     }
 
-    // Используем правильный базовый URL для API
-    const baseUrl = base_url && base_url.includes('ux.kaiten.ru') 
-      ? 'https://api.kaiten.ru' 
-      : (base_url || 'https://api.kaiten.ru');
+    // Используем переданный base_url напрямую, без коррекции
+    const baseUrl = base_url || 'https://ux.kaiten.ru';
     
     // Удаляем завершающий слэш, если он есть, чтобы избежать двойного слэша
     const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-    const url = `${cleanBaseUrl}/v1/cards?board_id=${board_id}`;
+    const url = `${cleanBaseUrl}/api/latest/cards?board_id=${board_id}`;
 
     console.log(`Proxying request to: ${url}`);
 
@@ -114,23 +115,31 @@ app.get('/api/kaiten/cards', async (req, res) => {
 
     // Добавляем таймаут для запроса
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 секунд таймаут
+    const timeoutId = setTimeout(() => {
+      console.log('Request timeout reached');
+      controller.abort();
+    }, 15000); // 15 секунд таймаут
 
+    console.log('Making request to Kaiten API...');
     const response = await fetch(url, {
       headers: headers,
       signal: controller.signal
     });
 
     clearTimeout(timeoutId);
+    console.log('Received response from Kaiten API');
 
     // Получаем текст ответа для отладки
     const responseText = await response.text();
     console.log(`Response status: ${response.status} ${response.statusText}`);
     console.log(`Response headers:`, Object.fromEntries(response.headers.entries()));
+    console.log(`Response text length:`, responseText.length);
     console.log(`Response text (first 1000 chars):`, responseText.substring(0, 1000));
 
     // Проверяем, является ли ответ HTML (возможно редирект или ошибка)
     const contentType = response.headers.get('content-type');
+    console.log('Content-Type header:', contentType);
+    
     if (contentType && contentType.includes('text/html')) {
       console.error('Received HTML response instead of JSON. This might indicate an error or redirect.');
       return res.status(500).json({ 
@@ -165,7 +174,9 @@ app.get('/api/kaiten/cards', async (req, res) => {
     // Парсим JSON из полученного текста
     let cards;
     try {
+      console.log('Parsing JSON response...');
       cards = JSON.parse(responseText);
+      console.log('Successfully parsed JSON response');
     } catch (parseError) {
       console.error('Error parsing JSON:', parseError);
       return res.status(500).json({ 
@@ -175,17 +186,20 @@ app.get('/api/kaiten/cards', async (req, res) => {
       });
     }
 
+    console.log(`Returning ${Array.isArray(cards) ? cards.length : 0} cards`);
     res.json(cards);
   } catch (error) {
     console.error('Proxy error:', error);
     
     if (error.name === 'AbortError') {
+      console.log('Request was aborted due to timeout');
       return res.status(408).json({ 
         error: 'Request timeout', 
         message: 'The request to Kaiten API timed out' 
       });
     }
     
+    console.log('Sending 500 error response');
     res.status(500).json({ 
       error: error.message,
       type: error.constructor.name
