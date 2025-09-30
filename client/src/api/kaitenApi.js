@@ -8,9 +8,8 @@ export const fetchKaitenTasks = async (config) => {
 
   try {
     // Создаем экземпляр axios с базовыми настройками
-    // Используем относительный URL для использования прокси
     const api = axios.create({
-      baseURL: '', // Пустой baseURL, так как запросы будут идти через прокси
+      baseURL: '/api', // Используем /api для обращения к нашему серверу
       headers: {
         // Используем стандартный формат авторизации Bearer
         'Authorization': 'Bearer ' + apiKey,
@@ -24,24 +23,10 @@ export const fetchKaitenTasks = async (config) => {
       timeout: 15000
     });
 
-    // Получаем все карточки с доски
+    // Получаем все карточки с доски через наш сервер
     console.log('Отправка запроса к API...');
-    // Пробуем альтернативный эндпоинт
-    let response;
-    try {
-      // Используем новый префикс /kaiten-api для прокси
-      response = await api.get('/kaiten-api/api/latest/cards?board_id=' + boardId);
-    } catch (firstError) {
-      console.log('Первый запрос не удался, пробуем альтернативный эндпоинт:', firstError.message);
-      try {
-        // Пробуем другой формат эндпоинта
-        response = await api.get('/kaiten-api/api/cards?board_id=' + boardId);
-      } catch (secondError) {
-        console.log('Второй запрос также не удался:', secondError.message);
-        // Пробуем еще один вариант
-        response = await api.get('/kaiten-api/boards/' + boardId + '/cards');
-      }
-    }
+    const response = await api.get(`/kaiten/cards?board_id=${boardId}&base_url=${encodeURIComponent(baseUrl || 'https://api.kaiten.ru')}&api_key=${encodeURIComponent(apiKey)}`);
+    
     console.log('Ответ от API получен:', response.data);
 
     // Проверяем, что ответ содержит массив карточек
@@ -51,35 +36,10 @@ export const fetchKaitenTasks = async (config) => {
     }
 
     // Преобразуем данные в нужный формат
-    const tasks = await Promise.all(response.data.map(async card => {
+    const tasks = response.data.map(card => {
       console.log('Обработка карточки:', card);
       console.log('Все поля карточки:', Object.keys(card));
       console.log('Значение description_filled:', card.description_filled);
-      
-      // Получаем описание карточки через отдельный запрос, если description_filled = true
-      let description = 'Нет описания';
-      if (card.description_filled) {
-        try {
-          console.log('Получаем описание для карточки:', card.id);
-          const cardDetailsResponse = await api.get(`/kaiten-api/api/latest/cards/${card.id}`);
-          console.log('Детали карточки:', cardDetailsResponse.data);
-          
-          // Проверяем различные поля для описания
-          if (cardDetailsResponse.data.description) {
-            description = cardDetailsResponse.data.description;
-          } else if (cardDetailsResponse.data.body) {
-            description = cardDetailsResponse.data.body;
-          } else if (cardDetailsResponse.data.content) {
-            description = cardDetailsResponse.data.content;
-          } else if (cardDetailsResponse.data.text) {
-            description = cardDetailsResponse.data.text;
-          }
-          
-          console.log('Полученное описание:', description);
-        } catch (descError) {
-          console.error('Ошибка при получении описания карточки:', descError);
-        }
-      }
 
       // Определяем важность на основе свойств карточки
       let importance = 'medium';
@@ -123,7 +83,7 @@ export const fetchKaitenTasks = async (config) => {
       return {
         id: card.id,
         title: card.title || 'Без названия',
-        description: description,
+        description: card.description || 'Нет описания',
         importance,
         complexity,
         tags
