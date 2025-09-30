@@ -83,6 +83,44 @@ app.get('/api/boards/:boardId/tasks', async (req, res) => {
   }
 });
 
+// Объединить задачи из Kaiten API с сохраненными задачами
+const mergeTasks = (kaitenTasks, savedTasks) => {
+  // Создаем карту сохраненных задач по ID для быстрого поиска
+  const savedTasksMap = new Map();
+  if (Array.isArray(savedTasks)) {
+    savedTasks.forEach(task => {
+      savedTasksMap.set(task.id, task);
+    });
+  }
+
+  // Объединяем задачи: сохраненные задачи перезаписывают задачи из Kaiten API
+  const mergedTasks = kaitenTasks.map(kaitenTask => {
+    const savedTask = savedTasksMap.get(kaitenTask.id);
+    if (savedTask) {
+      // Если задача была изменена пользователем, используем сохраненную версию
+      return {
+        ...kaitenTask,
+        importance: savedTask.importance,
+        complexity: savedTask.complexity
+      };
+    }
+    // Если задача не была изменена, используем версию из Kaiten API
+    return kaitenTask;
+  });
+
+  // Добавляем задачи, которые были созданы локально (если есть)
+  const kaitenTaskIds = new Set(kaitenTasks.map(task => task.id));
+  if (Array.isArray(savedTasks)) {
+    savedTasks.forEach(savedTask => {
+      if (!kaitenTaskIds.has(savedTask.id)) {
+        mergedTasks.push(savedTask);
+      }
+    });
+  }
+
+  return mergedTasks;
+};
+
 // Прокси для Kaiten API
 app.get('/api/kaiten/cards', async (req, res) => {
   try {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { fetchKaitenTasks } from './api/kaitenApi';
+import { fetchKaitenTasks, saveTasksToServer } from './api/kaitenApi';
 import Matrix from './components/Matrix';
 import TimelineView from './components/Timeline';
 import TimelineControls from './components/TimelineControls';
@@ -68,15 +69,31 @@ function App() {
 
     try {
       console.log('Начинаем загрузку задач с конфигурацией:', apiConfig);
-      const data = await fetchKaitenTasks(apiConfig);
-      console.log('Задачи успешно загружены:', data);
-      // Если API вернул пустой массив, используем моковые данные
-      if (Array.isArray(data) && data.length === 0) {
-        console.log('API вернул пустой массив задач, используем моковые данные');
-        setMockTasks();
-      } else {
-        setTasks(data);
+      
+      // Сначала получаем сохраненные задачи с сервера
+      let savedTasks = [];
+      try {
+        const api = axios.create({
+          baseURL: '/api',
+          timeout: 10000
+        });
+        
+        const savedResponse = await api.get(`/boards/${apiConfig.boardId}/tasks`);
+        savedTasks = savedResponse.data;
+        console.log('Получены сохраненные задачи:', savedTasks);
+      } catch (savedError) {
+        console.log('Не удалось получить сохраненные задачи:', savedError.message);
       }
+      
+      // Затем получаем задачи из Kaiten API
+      const kaitenTasks = await fetchKaitenTasks(apiConfig);
+      console.log('Задачи успешно загружены из Kaiten API:', kaitenTasks);
+      
+      // Объединяем задачи
+      const mergedTasks = mergeTasks(kaitenTasks, savedTasks);
+      console.log('Объединенные задачи:', mergedTasks);
+      
+      setTasks(mergedTasks);
     } catch (err) {
       console.error('Ошибка при загрузке задач:', err);
       setError('Ошибка загрузки задач: ' + err.message);
@@ -196,25 +213,47 @@ function App() {
     console.log(`Перемещение задачи ${taskId} в категорию важности: ${newImportance}, сложности: ${newComplexity}`);
 
     // Обновляем задачу в массиве задач
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
-        task.id === taskId
-          ? { ...task, importance: newImportance, complexity: newComplexity }
-          : task
-      )
+    const updatedTasks = tasks.map(task =>
+      task.id === taskId
+        ? { ...task, importance: newImportance, complexity: newComplexity }
+        : task
     );
+    
+    setTasks(updatedTasks);
+    
+    // Автоматически сохраняем изменения на сервере, если есть конфигурация API
+    if (apiConfig.boardId) {
+      saveTasksToServer(apiConfig.boardId, updatedTasks)
+        .then(response => {
+          console.log('Задачи успешно сохранены на сервере');
+        })
+        .catch(error => {
+          console.error('Ошибка при сохранении задач на сервере:', error);
+        });
+    }
   };
 
   const handleTaskUpdate = (updatedTask) => {
     console.log('Обновление задачи:', updatedTask);
 
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
-        task.id === updatedTask.id
-          ? { ...task, ...updatedTask }
-          : task
-      )
+    const updatedTasks = tasks.map(task =>
+      task.id === updatedTask.id
+        ? { ...task, ...updatedTask }
+        : task
     );
+    
+    setTasks(updatedTasks);
+    
+    // Автоматически сохраняем изменения на сервере, если есть конфигурация API
+    if (apiConfig.boardId) {
+      saveTasksToServer(apiConfig.boardId, updatedTasks)
+        .then(response => {
+          console.log('Задачи успешно сохранены на сервере');
+        })
+        .catch(error => {
+          console.error('Ошибка при сохранении задач на сервере:', error);
+        });
+    }
   };
 
   const handleTaskDelete = (taskId) => {
@@ -340,3 +379,41 @@ function App() {
 }
 
 export default App;
+
+// Функция для объединения задач из Kaiten API с сохраненными задачами
+const mergeTasks = (kaitenTasks, savedTasks) => {
+  // Создаем карту сохраненных задач по ID для быстрого поиска
+  const savedTasksMap = new Map();
+  if (Array.isArray(savedTasks)) {
+    savedTasks.forEach(task => {
+      savedTasksMap.set(task.id, task);
+    });
+  }
+
+  // Объединяем задачи: сохраненные задачи перезаписывают задачи из Kaiten API
+  const mergedTasks = kaitenTasks.map(kaitenTask => {
+    const savedTask = savedTasksMap.get(kaitenTask.id);
+    if (savedTask) {
+      // Если задача была изменена пользователем, используем сохраненную версию
+      return {
+        ...kaitenTask,
+        importance: savedTask.importance,
+        complexity: savedTask.complexity
+      };
+    }
+    // Если задача не была изменена, используем версию из Kaiten API
+    return kaitenTask;
+  });
+
+  // Добавляем задачи, которые были созданы локально (если есть)
+  const kaitenTaskIds = new Set(kaitenTasks.map(task => task.id));
+  if (Array.isArray(savedTasks)) {
+    savedTasks.forEach(savedTask => {
+      if (!kaitenTaskIds.has(savedTask.id)) {
+        mergedTasks.push(savedTask);
+      }
+    });
+  }
+
+  return mergedTasks;
+};

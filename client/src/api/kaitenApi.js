@@ -3,6 +3,7 @@ import axios from 'axios';
 // Функция для получения задач из Kaiten API
 export const fetchKaitenTasks = async (config) => {
   const { baseUrl, apiKey, boardId } = config;
+
   console.log('fetchKaitenTasks called with config:', { baseUrl, apiKey: '***', boardId });
 
   try {
@@ -23,8 +24,9 @@ export const fetchKaitenTasks = async (config) => {
     });
 
     // Получаем все карточки с доски через наш сервер
+    // Передаем baseUrl как base_url параметр, сервер будет использовать его напрямую
     console.log('Sending request to our server API...');
-    const response = await api.get(`/kaiten/cards?board_id=${boardId}&base_url=${encodeURIComponent(baseUrl || 'https://api.kaiten.ru')}&api_key=${encodeURIComponent(apiKey)}`);
+    const response = await api.get(`/kaiten/cards?board_id=${boardId}&base_url=${encodeURIComponent(baseUrl || 'https://ux.kaiten.ru')}&api_key=${encodeURIComponent(apiKey)}`);
     
     console.log('Received response from our server:', response.status, response.statusText);
     console.log('Response data type:', typeof response.data);
@@ -118,5 +120,30 @@ export const fetchKaitenTasks = async (config) => {
     }
     
     throw new Error(errorMessage);
+  }
+};
+
+// Функция для сохранения задач на сервер
+export const saveTasksToServer = async (boardId, tasks) => {
+  try {
+    console.log(`Saving ${tasks.length} tasks to server for board ${boardId}`);
+    
+    const api = axios.create({
+      baseURL: '/api',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 10000
+    });
+
+    const response = await api.put(`/boards/${boardId}`, {
+      tasks: tasks
+    });
+    
+    console.log('Tasks saved successfully:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error saving tasks to server:', error);
+    throw new Error('Не удалось сохранить задачи на сервере');
   }
 };
