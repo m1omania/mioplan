@@ -10,13 +10,10 @@ export default defineConfig({
         target: 'https://mioplan.onrender.com',
         changeOrigin: true,
         secure: true
-      },
-      '/kaiten-api': {
-        target: 'https://ux.kaiten.ru',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/kaiten-api/, '')
       }
     }
+  },
+  build: {
+    outDir: 'dist'
   }
 })
