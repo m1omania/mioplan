@@ -40,7 +40,7 @@ export const fetchKaitenTasks = async (config) => {
       console.log('Обработка карточки:', card);
       console.log('Все поля карточки:', Object.keys(card));
       console.log('Значение description_filled:', card.description_filled);
-
+      
       // Определяем важность на основе свойств карточки
       let importance = 'medium';
       if (card.priority === 1 || card.priority === 'high' || card.priority === 'critical') {
@@ -88,7 +88,7 @@ export const fetchKaitenTasks = async (config) => {
         complexity,
         tags
       };
-    }));
+    });
 
     console.log('Задачи успешно обработаны:', tasks);
     return tasks;
