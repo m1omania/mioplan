@@ -7,15 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://ux.kaiten.ru',
+        target: 'https://mioplan.onrender.com',
         changeOrigin: true,
-        secure: false
-      },
-      '/kaiten-api': {
-        target: 'https://ux.kaiten.ru',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path) => path.replace(/^\/kaiten-api/, '')
+        secure: true
       }
     }
   }
