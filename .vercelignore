@@ -3,4 +3,4 @@ README.md
 DEPLOYMENT.md
 Procfile
 server.js
-!client/dist/
+!dist/
