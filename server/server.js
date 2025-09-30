@@ -108,21 +108,42 @@ app.get('/api/kaiten/cards', async (req, res) => {
 
     console.log(`Using headers:`, JSON.stringify(headers, null, 2));
 
+    // Добавляем таймаут для запроса
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 секунд таймаут
+
     const response = await fetch(url, {
-      headers: headers
+      headers: headers,
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     // Получаем текст ответа для отладки
     const responseText = await response.text();
     console.log(`Response status: ${response.status} ${response.statusText}`);
     console.log(`Response headers:`, Object.fromEntries(response.headers.entries()));
-    console.log(`Response text (first 200 chars):`, responseText.substring(0, 200));
+    console.log(`Response text (first 1000 chars):`, responseText.substring(0, 1000));
 
     if (!response.ok) {
       console.error(`Kaiten API error: ${response.status} ${response.statusText}`, responseText);
       return res.status(response.status).json({
         error: `Kaiten API error: ${response.statusText}`,
-        details: responseText
+        status: response.status,
+        statusText: response.statusText,
+        url: url,
+        details: responseText.substring(0, 1000)
+      });
+    }
+
+    // Проверяем, является ли ответ JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('Response is not JSON:', contentType);
+      return res.status(500).json({ 
+        error: 'Response is not JSON',
+        contentType: contentType,
+        responsePreview: responseText.substring(0, 500)
       });
     }
 
@@ -134,14 +155,26 @@ app.get('/api/kaiten/cards', async (req, res) => {
       console.error('Error parsing JSON:', parseError);
       return res.status(500).json({ 
         error: 'Error parsing response from Kaiten API',
-        details: parseError.message 
+        details: parseError.message,
+        responsePreview: responseText.substring(0, 500)
       });
     }
 
     res.json(cards);
   } catch (error) {
     console.error('Proxy error:', error);
-    res.status(500).json({ error: error.message });
+    
+    if (error.name === 'AbortError') {
+      return res.status(408).json({ 
+        error: 'Request timeout', 
+        message: 'The request to Kaiten API timed out' 
+      });
+    }
+    
+    res.status(500).json({ 
+      error: error.message,
+      type: error.constructor.name
+    });
   }
 });
 

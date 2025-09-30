@@ -98,6 +98,25 @@ export const fetchKaitenTasks = async (config) => {
       console.error('Статус ошибки:', error.response.status);
       console.error('Данные ошибки:', error.response.data);
     }
-    throw new Error(error.response?.data?.message || error.message || 'Не удалось загрузить задачи');
+    
+    // Формируем более информативное сообщение об ошибке
+    let errorMessage = 'Не удалось загрузить задачи';
+    if (error.response) {
+      if (error.response.status === 401) {
+        errorMessage = 'Неверный API ключ';
+      } else if (error.response.status === 404) {
+        errorMessage = 'Доска не найдена';
+      } else if (error.response.status === 500) {
+        errorMessage = 'Ошибка сервера при подключении к Kaiten';
+      } else {
+        errorMessage = `Ошибка: ${error.response.status} - ${error.response.statusText}`;
+      }
+    } else if (error.request) {
+      errorMessage = 'Нет ответа от сервера. Проверьте подключение к интернету.';
+    } else {
+      errorMessage = error.message || 'Неизвестная ошибка';
+    }
+    
+    throw new Error(errorMessage);
   }
 };
