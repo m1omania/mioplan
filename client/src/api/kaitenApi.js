@@ -2,7 +2,17 @@ import axios from 'axios';
 
 // Функция для получения задач из Kaiten API
 export const fetchKaitenTasks = async (config) => {
-  const { baseUrl, apiKey, boardId } = config;
+  let { baseUrl, apiKey, boardId } = config;
+
+  // Автоматическая коррекция URL для Kaiten API
+  if (baseUrl) {
+    // Если пользователь ввел URL веб-интерфейса, корректируем его на API URL
+    if (baseUrl.includes('ux.kaiten.ru')) {
+      baseUrl = 'https://api.kaiten.ru';
+    }
+    // Удаляем завершающий слэш, если он есть
+    baseUrl = baseUrl.replace(/\/$/, '');
+  }
 
   console.log('Попытка подключения к Kaiten API:', { baseUrl, boardId });
 

@@ -92,7 +92,11 @@ app.get('/api/kaiten/cards', async (req, res) => {
       return res.status(400).json({ error: 'board_id and api_key are required' });
     }
 
-    const baseUrl = base_url || 'https://api.kaiten.ru';
+    // Используем правильный базовый URL для API
+    const baseUrl = base_url && base_url.includes('ux.kaiten.ru') 
+      ? 'https://api.kaiten.ru' 
+      : (base_url || 'https://api.kaiten.ru');
+    
     // Удаляем завершающий слэш, если он есть, чтобы избежать двойного слэша
     const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
     const url = `${cleanBaseUrl}/v1/cards?board_id=${board_id}`;
