@@ -1,0 +1,15 @@
+{
+  "name": "mioplan",
+  "version": "1.0.0",
+  "description": "Mioplan - Eisenhower Matrix and Timeline Planning Tool",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev",
+    "client": "cd client && npm run dev",
+    "build": "cd client && npm run build"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
