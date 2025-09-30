@@ -9,16 +9,10 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors({
-  origin: [
-    'http://localhost:5176', 
-    'https://mioplan.vercel.app', 
-    /\.vercel\.app$/,
-    'https://mioplan.onrender.com'
-  ],
+  origin: ['http://localhost:5176', 'https://mioplan.vercel.app'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range']
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
