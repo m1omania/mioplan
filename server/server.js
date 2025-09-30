@@ -125,6 +125,18 @@ app.get('/api/kaiten/cards', async (req, res) => {
     console.log(`Response headers:`, Object.fromEntries(response.headers.entries()));
     console.log(`Response text (first 1000 chars):`, responseText.substring(0, 1000));
 
+    // Проверяем, является ли ответ HTML (возможно редирект или ошибка)
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('text/html')) {
+      console.error('Received HTML response instead of JSON. This might indicate an error or redirect.');
+      return res.status(500).json({ 
+        error: 'Received HTML response instead of JSON from Kaiten API',
+        url: url,
+        contentType: contentType,
+        responsePreview: responseText.substring(0, 500)
+      });
+    }
+
     if (!response.ok) {
       console.error(`Kaiten API error: ${response.status} ${response.statusText}`, responseText);
       return res.status(response.status).json({
@@ -137,7 +149,6 @@ app.get('/api/kaiten/cards', async (req, res) => {
     }
 
     // Проверяем, является ли ответ JSON
-    const contentType = response.headers.get('content-type');
     if (!contentType || !contentType.includes('application/json')) {
       console.error('Response is not JSON:', contentType);
       return res.status(500).json({ 

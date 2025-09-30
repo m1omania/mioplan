@@ -15,7 +15,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [apiConfig, setApiConfig] = useState({
-    baseUrl: '',
+    baseUrl: 'https://api.kaiten.ru',
     apiKey: '',
     boardId: ''
   });
