@@ -21,6 +21,34 @@ function App() {
     boardId: ''
   });
   const [showSettings, setShowSettings] = useState(false);
+```
+
+/Users/andreyreutskiy/projects/mioplan/client/src/App.jsx
+```jsx
+<<<<<<< SEARCH
+import React, { useState, useEffect, useMemo } from 'react';
+import axios from 'axios';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { fetchKaitenTasks, saveTasksToServer } from './api/kaitenApi';
+import Matrix from './components/Matrix';
+import TimelineView from './components/Timeline';
+import TimelineControls from './components/TimelineControls';
+import ViewToggle from './components/ViewToggle';
+import Settings from './components/Settings';
+import { HistoryProvider } from './components/HistoryManager';
+import './App.css';
+
+function App() {
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [apiConfig, setApiConfig] = useState({
+    baseUrl: 'https://api.kaiten.ru',
+    apiKey: '',
+    boardId: ''
+  });
+  const [showSettings, setShowSettings] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     sectors: []
