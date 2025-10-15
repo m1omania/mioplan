@@ -1,9 +1,6 @@
 import React from 'react';
-import './UndefinedTasks.css';
 
-const UndefinedTasks = ({ tasks = [], onTaskUpdate }) => {
-  console.log('UndefinedTasks: Received tasks:', tasks.length);
-  
+const UndefinedTasks = ({ tasks = [] }) => {
   // Фильтруем задачи без определенного типа
   const undefinedTasks = tasks.filter(task => 
     !task.importance || !task.complexity || 
@@ -11,51 +8,42 @@ const UndefinedTasks = ({ tasks = [], onTaskUpdate }) => {
     task.importance === null || task.complexity === null
   );
 
-  console.log('UndefinedTasks: Undefined tasks:', undefinedTasks.length);
-  console.log('UndefinedTasks: Sample task:', tasks[0]);
-
-  const handleTaskClick = (task) => {
-    // При клике на задачу можно показать меню выбора типа
-    console.log('Clicked undefined task:', task);
-  };
-
   return (
-    <div className="undefined-tasks">
-      <div className="undefined-tasks-header">
-        <h3>Неопределенные задачи</h3>
-        <span className="task-count">{undefinedTasks.length}</span>
-      </div>
+    <div style={{
+      width: '280px',
+      background: 'white',
+      border: '1px solid #ccc',
+      marginRight: '20px',
+      padding: '10px'
+    }}>
+      <h3 style={{margin: '0 0 10px 0'}}>Неопределенные задачи ({undefinedTasks.length})</h3>
       
-      <div className="undefined-tasks-list">
-        {undefinedTasks.length === 0 ? (
-          <div className="empty-state">
-            <p>Все задачи классифицированы!</p>
-            <p>Всего задач: {tasks.length}</p>
-          </div>
-        ) : (
-          undefinedTasks.map(task => (
+      {undefinedTasks.length === 0 ? (
+        <p>Все задачи классифицированы!</p>
+      ) : (
+        <div style={{maxHeight: '400px', overflowY: 'auto'}}>
+          {undefinedTasks.slice(0, 10).map(task => (
             <div
               key={task.id}
-              className="undefined-task-item"
-              onClick={() => handleTaskClick(task)}
+              style={{
+                background: '#f5f5f5',
+                border: '1px solid #ddd',
+                padding: '8px',
+                marginBottom: '5px',
+                cursor: 'pointer'
+              }}
               title={task.description || task.title}
             >
-              <div className="task-title">{task.title}</div>
-              <div className="task-meta">
-                {task.tags && task.tags.length > 0 && (
-                  <div className="task-tags">
-                    {task.tags.slice(0, 2).map((tag, index) => (
-                      <span key={index} className="tag">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
+              {task.title}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+          {undefinedTasks.length > 10 && (
+            <div style={{textAlign: 'center', fontSize: '12px', color: '#666'}}>
+              ... и еще {undefinedTasks.length - 10} задач
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
