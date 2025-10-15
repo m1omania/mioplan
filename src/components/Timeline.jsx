@@ -88,7 +88,10 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
   // Обработчик изменения размера задачи
   const handleItemResize = (itemId, time, edge) => {
     const item = items.find(i => i.id === itemId);
-    if (!item) return;
+    if (!item) {
+      console.error('Item not found for resize:', itemId);
+      return;
+    }
     
     let startDate, endDate;
     
@@ -110,10 +113,26 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
     }
     
     const updatedTask = {
+      ...item,
       id: itemId,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString()
     };
+    
+    console.log('Timeline resize:', {
+      itemId,
+      edge,
+      originalStart: item.start_time.format('YYYY-MM-DD HH:mm'),
+      originalEnd: item.end_time.format('YYYY-MM-DD HH:mm'),
+      newStart: startDate.format('YYYY-MM-DD HH:mm'),
+      newEnd: endDate.format('YYYY-MM-DD HH:mm'),
+      updatedTask: {
+        id: updatedTask.id,
+        title: updatedTask.title,
+        importance: updatedTask.importance,
+        complexity: updatedTask.complexity
+      }
+    });
     
     onTaskUpdate(updatedTask);
   };

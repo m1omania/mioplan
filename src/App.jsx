@@ -36,6 +36,15 @@ function App() {
 
   const handleTaskUpdate = async (updatedTask) => {
     try {
+      console.log('App: Updating task:', {
+        id: updatedTask.id,
+        title: updatedTask.title,
+        startDate: updatedTask.startDate,
+        endDate: updatedTask.endDate,
+        importance: updatedTask.importance,
+        complexity: updatedTask.complexity
+      });
+
       // Обновляем задачу на сервере
       const response = await fetch(`/api/tasks/${updatedTask.id}`, {
         method: 'PUT',
@@ -50,11 +59,13 @@ function App() {
       }
 
       // Обновляем локальное состояние
-      setTasks(prevTasks => 
-        prevTasks.map(task => 
+      setTasks(prevTasks => {
+        const newTasks = prevTasks.map(task => 
           task.id === updatedTask.id ? updatedTask : task
-        )
-      );
+        );
+        console.log('App: Tasks updated, new count:', newTasks.length);
+        return newTasks;
+      });
     } catch (err) {
       console.error('Error updating task:', err);
       setError(err.message);
