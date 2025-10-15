@@ -5,6 +5,13 @@ const Header = ({ tasks = [] }) => {
   const highPriorityTasks = tasks.filter(task => task.importance === 'high').length;
   const completedTasks = tasks.filter(task => task.status === 'completed').length;
 
+  console.log('Header: Received tasks:', {
+    total: totalTasks,
+    highPriority: highPriorityTasks,
+    completed: completedTasks,
+    tasks: tasks.slice(0, 3) // Показываем первые 3 задачи для отладки
+  });
+
   return (
     <header className="header">
       <div className="header-content">
