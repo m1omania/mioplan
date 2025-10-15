@@ -1,5 +1,5 @@
 {
-  "name": "mioplan-timeline",
+  "name": "mioplan-timeline-frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,8 +8,6 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "server": "cd server && npm start",
-    "dev:full": "concurrently \"npm run server\" \"npm run dev\"",
     "vercel-build": "npm run build"
   },
   "dependencies": {
