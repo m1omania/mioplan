@@ -64,8 +64,8 @@ const fetchKaitenTasks = async () => {
       id: card.id,
       title: card.title,
       description: card.description || 'Нет описания',
-      importance: 'medium', // По умолчанию
-      complexity: 'medium', // По умолчанию
+      importance: null, // По умолчанию неопределено - попадет в область слева
+      complexity: null, // По умолчанию неопределено - попадет в область слева
       startDate: null,
       endDate: null,
       tags: card.tags ? card.tags.map(tag => tag.title) : []

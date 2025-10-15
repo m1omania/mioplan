@@ -39,25 +39,28 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
     return groups;
   }, []);
 
-  // Преобразуем задачи в элементы таймлайна
+  // Преобразуем задачи в элементы таймлайна (только определенные задачи)
   const items = useMemo(() => {
-    return tasks.map(task => {
-      // Если у задачи нет дат, устанавливаем дефолтные
-      const startDate = task.startDate ? moment(task.startDate) : moment().startOf('day');
-      const endDate = task.endDate ? moment(task.endDate) : moment().add(1, 'week').startOf('day');
-      
-      return {
-        id: task.id,
-        title: task.title,
-        description: task.description,
-        start_time: startDate,
-        end_time: endDate,
-        group: `${task.importance}-${task.complexity}`,
-        importance: task.importance,
-        complexity: task.complexity,
-        tags: task.tags || []
-      };
-    });
+    return tasks
+      .filter(task => task.importance && task.complexity && 
+                     task.importance !== 'undefined' && task.complexity !== 'undefined')
+      .map(task => {
+        // Если у задачи нет дат, устанавливаем дефолтные
+        const startDate = task.startDate ? moment(task.startDate) : moment().startOf('day');
+        const endDate = task.endDate ? moment(task.endDate) : moment().add(1, 'week').startOf('day');
+        
+        return {
+          id: task.id,
+          title: task.title,
+          description: task.description,
+          start_time: startDate,
+          end_time: endDate,
+          group: `${task.importance}-${task.complexity}`,
+          importance: task.importance,
+          complexity: task.complexity,
+          tags: task.tags || []
+        };
+      });
   }, [tasks]);
 
   // Обработчик перемещения задачи

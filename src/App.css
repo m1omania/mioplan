@@ -87,6 +87,18 @@ body {
   width: 100%;
 }
 
+.main-content {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+}
+
 /* Timeline container */
 .timeline-container {
   background: rgba(255, 255, 255, 0.95);
