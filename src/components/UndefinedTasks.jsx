@@ -1,12 +1,18 @@
 import React from 'react';
 import './UndefinedTasks.css';
 
-const UndefinedTasks = ({ tasks, onTaskUpdate }) => {
+const UndefinedTasks = ({ tasks = [], onTaskUpdate }) => {
+  console.log('UndefinedTasks: Received tasks:', tasks.length);
+  
   // Фильтруем задачи без определенного типа
   const undefinedTasks = tasks.filter(task => 
     !task.importance || !task.complexity || 
-    task.importance === 'undefined' || task.complexity === 'undefined'
+    task.importance === 'undefined' || task.complexity === 'undefined' ||
+    task.importance === null || task.complexity === null
   );
+
+  console.log('UndefinedTasks: Undefined tasks:', undefinedTasks.length);
+  console.log('UndefinedTasks: Sample task:', tasks[0]);
 
   const handleTaskClick = (task) => {
     // При клике на задачу можно показать меню выбора типа
@@ -24,6 +30,7 @@ const UndefinedTasks = ({ tasks, onTaskUpdate }) => {
         {undefinedTasks.length === 0 ? (
           <div className="empty-state">
             <p>Все задачи классифицированы!</p>
+            <p>Всего задач: {tasks.length}</p>
           </div>
         ) : (
           undefinedTasks.map(task => (

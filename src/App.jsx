@@ -100,6 +100,9 @@ function App() {
     );
   }
 
+          console.log('App: Rendering with tasks:', tasks.length);
+          console.log('App: Sample task:', tasks[0]);
+
           return (
             <div className="app">
               <Header tasks={tasks} />
