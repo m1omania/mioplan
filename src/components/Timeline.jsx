@@ -5,6 +5,58 @@ import moment from 'moment';
 import './Timeline.css';
 
 const TimelineView = ({ tasks, onTaskUpdate }) => {
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    try {
+      const taskData = JSON.parse(e.dataTransfer.getData('application/json'));
+      
+      // Определяем, в какую группу упала задача (по позиции мыши)
+      const rect = e.currentTarget.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const groupHeight = rect.height / groups.length;
+      const groupIndex = Math.floor(y / groupHeight);
+      
+      if (groupIndex >= 0 && groupIndex < groups.length) {
+        const group = groups[groupIndex];
+        const [importance, complexity] = group.id.split('-');
+        
+        // Определяем дату по позиции X (горизонтальная позиция)
+        const x = e.clientX - rect.left;
+        const timelineWidth = rect.width - 180; // вычитаем ширину sidebar
+        const timeRange = moment().add(2, 'month').endOf('month').diff(moment().startOf('month'));
+        const timePerPixel = timeRange / timelineWidth;
+        const timeOffset = x * timePerPixel;
+        const dropTime = moment().startOf('month').add(timeOffset);
+        
+        // Обновляем задачу с новым типом и датой
+        const updatedTask = {
+          ...taskData,
+          importance: importance,
+          complexity: complexity,
+          startDate: dropTime.toISOString(),
+          endDate: dropTime.add(1, 'week').toISOString()
+        };
+        
+        console.log('Dropping task:', {
+          task: taskData.title,
+          group: group.id,
+          dropTime: dropTime.format('YYYY-MM-DD HH:mm'),
+          x: x,
+          timelineWidth: timelineWidth
+        });
+        
+        onTaskUpdate(updatedTask);
+      }
+    } catch (error) {
+      console.error('Error handling drop:', error);
+    }
+  };
+
   // 9 групп для классификации задач
   const groups = useMemo(() => {
     const importanceLevels = ['high', 'medium', 'low'];
@@ -193,18 +245,22 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
   };
 
   return (
-    <div className="timeline-container">
+    <div 
+      className="timeline-container"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <ReactCalendarTimeline
         groups={groups}
         items={items}
-        defaultTimeStart={moment().add(-1, 'month')}
-        defaultTimeEnd={moment().add(3, 'month')}
+        defaultTimeStart={moment().startOf('month')}
+        defaultTimeEnd={moment().add(2, 'month').endOf('month')}
         itemRenderer={itemRenderer}
         onItemMove={handleItemMove}
         onItemResize={handleItemResize}
         canMove={true}
         canResize="both"
-        stackItems={true}
+        stackItems={false}
         showCursorLine={true}
         sidebarWidth={180}
         lineHeight={50}

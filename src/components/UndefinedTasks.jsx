@@ -1,12 +1,17 @@
 import React from 'react';
 
-const UndefinedTasks = ({ tasks = [] }) => {
+const UndefinedTasks = ({ tasks = [], onTaskUpdate }) => {
   // Фильтруем задачи без определенного типа
   const undefinedTasks = tasks.filter(task => 
     !task.importance || !task.complexity || 
     task.importance === 'undefined' || task.complexity === 'undefined' ||
     task.importance === null || task.complexity === null
   );
+
+  const handleDragStart = (e, task) => {
+    e.dataTransfer.setData('application/json', JSON.stringify(task));
+    e.dataTransfer.effectAllowed = 'move';
+  };
 
   return (
     <div style={{
@@ -25,12 +30,14 @@ const UndefinedTasks = ({ tasks = [] }) => {
           {undefinedTasks.slice(0, 10).map(task => (
             <div
               key={task.id}
+              draggable
+              onDragStart={(e) => handleDragStart(e, task)}
               style={{
                 background: '#f5f5f5',
                 border: '1px solid #ddd',
                 padding: '8px',
                 marginBottom: '5px',
-                cursor: 'pointer'
+                cursor: 'grab'
               }}
               title={task.description || task.title}
             >
