@@ -29,25 +29,19 @@
   z-index: 10;
 }
 
-/* Заголовки месяцев должны быть ниже зафиксированных заголовков */
+/* Заголовки месяцев */
 .month-header {
-  z-index: 5 !important;
+  /* z-index убран, так как нет фиксации колонок */
 }
 
 .unsorted-header {
   width: 200px;
   background-color: #e9ecef;
-  position: sticky;
-  left: 0;
-  z-index: 30;
 }
 
 .type-header {
   width: 150px;
   background-color: #e9ecef;
-  position: sticky;
-  left: 200px;
-  z-index: 30;
 }
 
 .month-header {
@@ -66,23 +60,16 @@
   background-color: #f8f9fa;
   width: 200px;
   vertical-align: top;
-  position: sticky;
-  left: 0;
-  z-index: 25;
 }
 
 .type-cell {
   background-color: #f8f9fa;
   width: 150px;
-  position: sticky;
-  left: 200px;
-  z-index: 25;
 }
 
 .month-cell {
   background-color: #ffffff;
   width: 100px; /* Фиксированная ширина для каждой ячейки месяца */
-  z-index: 5; /* Ниже зафиксированных колонок */
 }
 
 /* Отступ между первой и второй колонкой */
@@ -112,8 +99,6 @@
   cursor: grab;
   font-size: 12px;
   transition: all 0.2s ease;
-  position: relative;
-  z-index: 1;
 }
 
 .task-item:hover {
