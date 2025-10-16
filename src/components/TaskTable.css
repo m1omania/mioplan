@@ -32,11 +32,17 @@
 .unsorted-header {
   width: 200px;
   background-color: #e9ecef;
+  position: sticky;
+  left: 0;
+  z-index: 20;
 }
 
 .type-header {
   width: 150px;
   background-color: #e9ecef;
+  position: sticky;
+  left: 200px;
+  z-index: 20;
 }
 
 .month-header {
@@ -55,11 +61,17 @@
   background-color: #f8f9fa;
   width: 200px;
   vertical-align: top;
+  position: sticky;
+  left: 0;
+  z-index: 15;
 }
 
 .type-cell {
   background-color: #f8f9fa;
   width: 150px;
+  position: sticky;
+  left: 200px;
+  z-index: 15;
 }
 
 .month-cell {
