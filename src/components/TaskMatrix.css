@@ -30,6 +30,7 @@
   border-collapse: collapse;
   table-layout: fixed;
   min-width: 1200px;
+  transition: all 0.3s ease;
 }
 
 .task-matrix th {
@@ -56,6 +57,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: width 0.3s ease, font-size 0.3s ease;
 }
 
 .task-matrix td {
@@ -75,8 +77,8 @@
   background-color: #ffffff;
   width: 100px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  min-width: 60px;
+  transition: all 0.3s ease;
+  min-width: 40px;
   max-width: 200px;
 }
 
