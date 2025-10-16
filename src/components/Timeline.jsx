@@ -262,9 +262,12 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
       itemHeightRatio={0.75}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
+      timeSteps={{
+        month: 1,
+        day: 1,
+        hour: 1
+      }}
       headerLabelFormats={{
-        yearShort: 'YY',
-        yearLong: 'YYYY',
         monthShort: 'MMM',
         monthMedium: 'MMMM YYYY',
         monthLong: 'MMMM YYYY',
@@ -275,8 +278,6 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
         hourLong: 'HH:mm'
       }}
       subHeaderLabelFormats={{
-        yearShort: 'YY',
-        yearLong: 'YYYY',
         monthShort: 'MMM',
         monthMedium: 'MMMM',
         monthLong: 'MMMM',
