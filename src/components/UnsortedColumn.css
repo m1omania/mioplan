@@ -57,9 +57,9 @@
   gap: 8px;
 }
 
-/* Тонкий скроллбар */
+/* Очень тонкий скроллбар */
 .unsorted-tasks::-webkit-scrollbar {
-  width: 1px;
+  width: 2px;
 }
 
 .unsorted-tasks::-webkit-scrollbar-track {
@@ -67,12 +67,12 @@
 }
 
 .unsorted-tasks::-webkit-scrollbar-thumb {
-  background: #6c757d;
+  background: #dee2e6;
   border-radius: 0;
 }
 
 .unsorted-tasks::-webkit-scrollbar-thumb:hover {
-  background: #495057;
+  background: #adb5bd;
 }
 
 .task-item {

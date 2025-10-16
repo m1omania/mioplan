@@ -14,6 +14,17 @@
   overflow: auto;
 }
 
+.zoom-indicator {
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px 16px;
+  font-size: 12px;
+  z-index: 100;
+  text-align: center;
+}
+
 .task-matrix table {
   width: 100%;
   border-collapse: collapse;
@@ -41,6 +52,10 @@
 .month-header {
   width: 100px;
   background-color: #e9ecef;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .task-matrix td {
@@ -61,6 +76,8 @@
   width: 100px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  min-width: 60px;
+  max-width: 200px;
 }
 
 .month-cell:hover {

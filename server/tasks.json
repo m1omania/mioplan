@@ -18,10 +18,10 @@
     "endDate": null
   },
   "48761521": {
-    "importance": null,
-    "complexity": null,
-    "startDate": null,
-    "endDate": null
+    "importance": "high",
+    "complexity": "medium",
+    "startDate": "2026-02-01T12:55:56.174Z",
+    "endDate": "2026-02-08T12:55:56.174Z"
   },
   "49320142": {
     "importance": "high",
@@ -30,10 +30,10 @@
     "endDate": "2025-09-26T17:44:07.154Z"
   },
   "49516550": {
-    "importance": null,
-    "complexity": null,
-    "startDate": null,
-    "endDate": null
+    "importance": "high",
+    "complexity": "medium",
+    "startDate": "2026-02-01T12:56:35.410Z",
+    "endDate": "2026-02-08T12:56:35.410Z"
   },
   "49875088": {
     "importance": "medium",
