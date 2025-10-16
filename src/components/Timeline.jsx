@@ -245,52 +245,48 @@ const TimelineView = ({ tasks, onTaskUpdate }) => {
   };
 
   return (
-    <div 
-      className="timeline-container"
+    <ReactCalendarTimeline
+      groups={groups}
+      items={items}
+      defaultTimeStart={moment().startOf('month')}
+      defaultTimeEnd={moment().add(2, 'month').endOf('month')}
+      itemRenderer={itemRenderer}
+      onItemMove={handleItemMove}
+      onItemResize={handleItemResize}
+      canMove={true}
+      canResize="both"
+      stackItems={false}
+      showCursorLine={true}
+      sidebarWidth={180}
+      lineHeight={50}
+      itemHeightRatio={0.75}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-    >
-      <ReactCalendarTimeline
-        groups={groups}
-        items={items}
-        defaultTimeStart={moment().startOf('month')}
-        defaultTimeEnd={moment().add(2, 'month').endOf('month')}
-        itemRenderer={itemRenderer}
-        onItemMove={handleItemMove}
-        onItemResize={handleItemResize}
-        canMove={true}
-        canResize="both"
-        stackItems={false}
-        showCursorLine={true}
-        sidebarWidth={180}
-        lineHeight={50}
-        itemHeightRatio={0.75}
-        headerLabelFormats={{
-          yearShort: 'YY',
-          yearLong: 'YYYY',
-          monthShort: 'MMM',
-          monthMedium: 'MMMM YYYY',
-          monthLong: 'MMMM YYYY',
-          dayShort: 'D',
-          dayLong: 'dddd, D',
-          hourShort: 'HH',
-          hourMedium: 'HH:mm',
-          hourLong: 'HH:mm'
-        }}
-        subHeaderLabelFormats={{
-          yearShort: 'YY',
-          yearLong: 'YYYY',
-          monthShort: 'MMM',
-          monthMedium: 'MMMM',
-          monthLong: 'MMMM',
-          dayShort: 'D',
-          dayLong: 'dddd D',
-          hourShort: 'HH',
-          hourMedium: 'HH:mm',
-          hourLong: 'HH:mm'
-        }}
-      />
-    </div>
+      headerLabelFormats={{
+        yearShort: 'YY',
+        yearLong: 'YYYY',
+        monthShort: 'MMM',
+        monthMedium: 'MMMM YYYY',
+        monthLong: 'MMMM YYYY',
+        dayShort: 'D',
+        dayLong: 'dddd, D',
+        hourShort: 'HH',
+        hourMedium: 'HH:mm',
+        hourLong: 'HH:mm'
+      }}
+      subHeaderLabelFormats={{
+        yearShort: 'YY',
+        yearLong: 'YYYY',
+        monthShort: 'MMM',
+        monthMedium: 'MMMM',
+        monthLong: 'MMMM',
+        dayShort: 'D',
+        dayLong: 'dddd D',
+        hourShort: 'HH',
+        hourMedium: 'HH:mm',
+        hourLong: 'HH:mm'
+      }}
+    />
   );
 };
 
