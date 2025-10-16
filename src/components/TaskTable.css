@@ -29,6 +29,11 @@
   z-index: 10;
 }
 
+/* Заголовки месяцев должны быть ниже зафиксированных заголовков */
+.month-header {
+  z-index: 5 !important;
+}
+
 .unsorted-header {
   width: 200px;
   background-color: #e9ecef;
@@ -48,7 +53,6 @@
 .month-header {
   width: 100px; /* Фиксированная ширина для каждой колонки месяца */
   background-color: #e9ecef;
-  z-index: 5; /* Ниже зафиксированных колонок */
 }
 
 .task-table td {
