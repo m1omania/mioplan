@@ -111,6 +111,11 @@
   font-size: 12px;
   transition: all 0.2s ease;
   word-wrap: break-word;
+  user-select: none;
+}
+
+.task-item:active {
+  cursor: grabbing;
 }
 
 .task-item:hover {

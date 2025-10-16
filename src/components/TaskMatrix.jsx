@@ -117,7 +117,16 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
                   >
                     <div className="month-tasks">
                       {getTasksForTypeAndMonth(type.id, month.key).map(task => (
-                        <div key={task.id} className="task-item placed">
+                        <div 
+                          key={task.id} 
+                          className="task-item placed"
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData('application/json', JSON.stringify(task));
+                            e.dataTransfer.effectAllowed = 'move';
+                          }}
+                          title={task.description || task.title}
+                        >
                           {task.title}
                         </div>
                       ))}
