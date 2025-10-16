@@ -14,6 +14,7 @@
   height: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  min-width: 1500px; /* Минимальная ширина для всех колонок */
 }
 
 .task-table th {
@@ -39,7 +40,7 @@
 }
 
 .month-header {
-  width: calc((100% - 350px) / 3);
+  width: 100px; /* Фиксированная ширина для каждой колонки месяца */
   background-color: #e9ecef;
 }
 
@@ -63,7 +64,7 @@
 
 .month-cell {
   background-color: #ffffff;
-  width: calc((100% - 350px) / 3);
+  width: 100px; /* Фиксированная ширина для каждой ячейки месяца */
 }
 
 /* Отступ между первой и второй колонкой */

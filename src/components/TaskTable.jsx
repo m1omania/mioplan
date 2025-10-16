@@ -30,11 +30,21 @@ const TaskTable = ({ tasks, onTaskUpdate }) => {
     { id: 'low-low', label: 'Минимум/Просто', color: '#22c55e' }
   ];
 
-  // Месяцы для таймлайна
+  // Месяцы для таймлайна (13 месяцев: октябрь + 12 месяцев вперед)
   const months = [
     { key: 'october', label: 'Октябрь', start: moment().month(9).startOf('month') },
     { key: 'november', label: 'Ноябрь', start: moment().month(10).startOf('month') },
-    { key: 'december', label: 'Декабрь', start: moment().month(11).startOf('month') }
+    { key: 'december', label: 'Декабрь', start: moment().month(11).startOf('month') },
+    { key: 'january', label: 'Январь', start: moment().month(0).add(1, 'year').startOf('month') },
+    { key: 'february', label: 'Февраль', start: moment().month(1).add(1, 'year').startOf('month') },
+    { key: 'march', label: 'Март', start: moment().month(2).add(1, 'year').startOf('month') },
+    { key: 'april', label: 'Апрель', start: moment().month(3).add(1, 'year').startOf('month') },
+    { key: 'may', label: 'Май', start: moment().month(4).add(1, 'year').startOf('month') },
+    { key: 'june', label: 'Июнь', start: moment().month(5).add(1, 'year').startOf('month') },
+    { key: 'july', label: 'Июль', start: moment().month(6).add(1, 'year').startOf('month') },
+    { key: 'august', label: 'Август', start: moment().month(7).add(1, 'year').startOf('month') },
+    { key: 'september', label: 'Сентябрь', start: moment().month(8).add(1, 'year').startOf('month') },
+    { key: 'october-next', label: 'Октябрь', start: moment().month(9).add(1, 'year').startOf('month') }
   ];
 
   // Группируем задачи по типам и месяцам
