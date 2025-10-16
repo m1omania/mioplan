@@ -114,7 +114,6 @@ body {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 16px;
-  padding: 1.5rem;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   flex: 1;
@@ -237,7 +236,4 @@ body {
     padding: 1rem;
   }
   
-  .react-calendar-timeline {
-    padding: 1rem;
-  }
 }
