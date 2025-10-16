@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Timeline from './components/Timeline';
+import TaskTable from './components/TaskTable';
 import Header from './components/Header';
-import UndefinedTasks from './components/UndefinedTasks';
 import './App.css';
 
 function App() {
@@ -107,16 +106,10 @@ function App() {
             <div className="app">
               <Header tasks={tasks} />
               <main className="main">
-                <div className="main-content">
-                  <UndefinedTasks 
-                    tasks={tasks} 
-                    onTaskUpdate={handleTaskUpdate}
-                  />
-                  <Timeline 
-                    tasks={tasks} 
-                    onTaskUpdate={handleTaskUpdate}
-                  />
-                </div>
+                <TaskTable 
+                  tasks={tasks} 
+                  onTaskUpdate={handleTaskUpdate}
+                />
               </main>
             </div>
           );
