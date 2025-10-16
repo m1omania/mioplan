@@ -229,20 +229,30 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
                     onDrop={(e) => handleDrop(e, type.id, column.key)}
                   >
                     <div className="month-tasks">
-                      {getTasksForTypeAndColumn(type.id, column.key).map(task => (
-                        <div 
-                          key={task.id} 
-                          className="task-item placed"
-                          draggable
-                          onDragStart={(e) => {
-                            e.dataTransfer.setData('application/json', JSON.stringify(task));
-                            e.dataTransfer.effectAllowed = 'move';
-                          }}
-                          title={task.description || task.title}
-                        >
-                          {task.title}
-                        </div>
-                      ))}
+                      {getTasksForTypeAndColumn(type.id, column.key).map(task => {
+                        // Определяем размер задачи в зависимости от уровня зума
+                        const getTaskSize = () => {
+                          if (zoomLevel <= 0.8) return 'tiny';      // Годы - очень маленькие
+                          if (zoomLevel <= 1.5) return 'small';     // Месяцы - маленькие
+                          if (zoomLevel <= 2.5) return 'medium';    // Недели - средние
+                          return 'large';                           // Дни - большие
+                        };
+                        
+                        return (
+                          <div 
+                            key={task.id} 
+                            className={`task-item placed task-${getTaskSize()}`}
+                            draggable
+                            onDragStart={(e) => {
+                              e.dataTransfer.setData('application/json', JSON.stringify(task));
+                              e.dataTransfer.effectAllowed = 'move';
+                            }}
+                            title={task.description || task.title}
+                          >
+                            {task.title}
+                          </div>
+                        );
+                      })}
                     </div>
                   </td>
                 ))}
