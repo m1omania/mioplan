@@ -68,24 +68,29 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
       const [importance, complexity] = typeId.split('-');
       
       const targetMonth = months.find(m => m.key === monthKey);
-      if (!targetMonth) {
-        console.error('Target month not found:', monthKey);
-        return;
-      }
-
-      const dropTime = new Date(targetMonth.start);
+      if (!targetMonth) return;
       
       const updatedTask = {
         ...taskData,
         importance: importance,
         complexity: complexity,
-        startDate: dropTime.toISOString(),
-        endDate: new Date(dropTime.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString() // +1 неделя
+        startDate: targetMonth.start.toISOString(),
+        endDate: targetMonth.end.toISOString()
       };
       
       onTaskUpdate(updatedTask);
     } catch (error) {
       console.error('Error handling drop:', error);
+    }
+  };
+
+  // Разрешаем перетаскивание уже размещённых задач внутри таблицы
+  const handleTaskDragStart = (e, task) => {
+    try {
+      e.dataTransfer.setData('application/json', JSON.stringify(task));
+      e.dataTransfer.effectAllowed = 'move';
+    } catch (err) {
+      console.error('Error starting drag:', err);
     }
   };
 
@@ -97,7 +102,12 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
             <tr>
               <th className="type-header">Тип важности</th>
               {months.map(month => (
-                <th key={month.key} className="month-header">{month.label}</th>
+                <th 
+                  key={month.key} 
+                  className="month-header"
+                >
+                  {month.label}
+                </th>
               ))}
             </tr>
           </thead>
@@ -119,14 +129,11 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
                   >
                     <div className="month-tasks">
                       {getTasksForTypeAndMonth(type.id, month.key).map(task => (
-                        <div 
-                          key={task.id} 
+                        <div
+                          key={task.id}
                           className="task-item placed"
                           draggable
-                          onDragStart={(e) => {
-                            e.dataTransfer.setData('application/json', JSON.stringify(task));
-                            e.dataTransfer.effectAllowed = 'move';
-                          }}
+                          onDragStart={(e) => handleTaskDragStart(e, task)}
                           title={task.description || task.title}
                         >
                           {task.title}
