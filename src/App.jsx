@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import TaskTable from './components/TaskTable';
-import Header from './components/Header';
 import './App.css';
 
 function App() {
@@ -75,7 +74,6 @@ function App() {
   if (loading) {
     return (
       <div className="app">
-        <Header tasks={tasks} />
         <div className="loading">
           <div className="spinner"></div>
           <p>Загружаем задачи...</p>
@@ -87,7 +85,6 @@ function App() {
   if (error) {
     return (
       <div className="app">
-        <Header tasks={tasks} />
         <div className="error">
           <h2>Ошибка загрузки</h2>
           <p>{error}</p>
@@ -104,13 +101,10 @@ function App() {
 
           return (
             <div className="app">
-              <Header tasks={tasks} />
-              <main className="main">
-                <TaskTable 
-                  tasks={tasks} 
-                  onTaskUpdate={handleTaskUpdate}
-                />
-              </main>
+              <TaskTable 
+                tasks={tasks} 
+                onTaskUpdate={handleTaskUpdate}
+              />
             </div>
           );
 }
