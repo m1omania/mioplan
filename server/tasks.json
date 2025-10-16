@@ -1,27 +1,27 @@
 {
   "48036083": {
-    "importance": "high",
-    "complexity": "low",
-    "startDate": "2025-10-15T20:38:22.302Z",
-    "endDate": "2025-10-22T20:38:22.303Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "48470295": {
-    "importance": "high",
-    "complexity": "medium",
-    "startDate": "2025-10-15T20:38:29.991Z",
-    "endDate": "2025-10-22T20:38:29.992Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "48761496": {
-    "importance": "high",
-    "complexity": "medium",
-    "startDate": "2025-10-15T20:38:32.115Z",
-    "endDate": "2025-10-22T20:38:32.115Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "48761521": {
-    "importance": "high",
-    "complexity": "low",
-    "startDate": "2025-10-15T20:38:41.166Z",
-    "endDate": "2025-10-22T20:38:41.166Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "49320142": {
     "importance": "high",
@@ -30,10 +30,10 @@
     "endDate": "2025-09-26T17:44:07.154Z"
   },
   "49516550": {
-    "importance": "high",
-    "complexity": "low",
-    "startDate": "2025-10-15T20:38:45.816Z",
-    "endDate": "2025-10-22T20:38:45.816Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "49875088": {
     "importance": "medium",
@@ -114,10 +114,10 @@
     "endDate": "2025-11-28T14:15:00.000Z"
   },
   "55287959": {
-    "importance": "high",
-    "complexity": "medium",
-    "startDate": "2025-10-31T21:00:00.000Z",
-    "endDate": "2025-11-07T21:00:00.000Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "55500364": {
     "importance": "medium",
@@ -144,10 +144,10 @@
     "endDate": "2025-10-07T21:00:00.000Z"
   },
   "55735393": {
-    "importance": "high",
-    "complexity": "medium",
-    "startDate": "2025-10-31T21:00:00.000Z",
-    "endDate": "2025-11-07T21:00:00.000Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "55735507": {
     "importance": "low",
@@ -168,16 +168,16 @@
     "endDate": "2025-10-02T15:35:32.612Z"
   },
   "55783913": {
-    "importance": "high",
-    "complexity": "medium",
-    "startDate": "2025-11-01T11:32:28.855Z",
-    "endDate": "2025-11-08T11:32:28.855Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "55909718": {
-    "importance": "high",
-    "complexity": "medium",
-    "startDate": "2025-11-01T11:32:54.211Z",
-    "endDate": "2025-11-08T11:32:54.211Z"
+    "importance": null,
+    "complexity": null,
+    "startDate": null,
+    "endDate": null
   },
   "55965124": {
     "importance": "high",
