@@ -42,10 +42,10 @@
     "endDate": "2025-10-22T20:38:50.399Z"
   },
   "51544031": {
-    "importance": "high",
-    "complexity": "low",
-    "startDate": "2025-10-15T20:38:59.874Z",
-    "endDate": "2025-10-22T20:38:59.874Z"
+    "importance": "medium",
+    "complexity": "high",
+    "startDate": "2025-10-14T13:45:00.000Z",
+    "endDate": "2025-10-25T16:00:00.000Z"
   },
   "51544210": {
     "importance": "medium",
@@ -113,6 +113,12 @@
     "startDate": "2025-11-19T02:15:00.000Z",
     "endDate": "2025-11-28T14:15:00.000Z"
   },
+  "55287959": {
+    "importance": "high",
+    "complexity": "medium",
+    "startDate": "2025-10-31T21:00:00.000Z",
+    "endDate": "2025-11-07T21:00:00.000Z"
+  },
   "55500364": {
     "importance": "medium",
     "complexity": "low",
@@ -137,6 +143,12 @@
     "startDate": "2025-09-30T21:00:00.000Z",
     "endDate": "2025-10-07T21:00:00.000Z"
   },
+  "55735393": {
+    "importance": "high",
+    "complexity": "medium",
+    "startDate": "2025-10-31T21:00:00.000Z",
+    "endDate": "2025-11-07T21:00:00.000Z"
+  },
   "55735507": {
     "importance": "low",
     "complexity": "medium",
@@ -154,5 +166,17 @@
     "complexity": "high",
     "startDate": "2025-09-25T15:35:32.612Z",
     "endDate": "2025-10-02T15:35:32.612Z"
+  },
+  "56270658": {
+    "importance": "medium",
+    "complexity": "low",
+    "startDate": "2025-09-30T21:00:00.000Z",
+    "endDate": "2025-10-07T21:00:00.000Z"
+  },
+  "56510802": {
+    "importance": "medium",
+    "complexity": "low",
+    "startDate": "2025-09-30T21:00:00.000Z",
+    "endDate": "2025-10-07T21:00:00.000Z"
   }
 }

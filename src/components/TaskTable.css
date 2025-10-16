@@ -14,6 +14,26 @@
   height: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+  position: relative;
+}
+
+.task-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.task-table tbody {
+  display: block;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.task-table thead, .task-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .task-table th {
@@ -23,6 +43,9 @@
   font-weight: 600;
   text-align: center;
   vertical-align: middle;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .unsorted-header {
