@@ -22,13 +22,15 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
     { id: 'low-low', label: 'Минимум/Просто', color: '#22c55e' }
   ];
 
-  // Месяцы для таймлайна (13 месяцев: октябрь + 12 месяцев вперед)
+  // Динамические месяцы - начинаем с июня 2025, заканчиваем через год от текущего месяца
   const months = [];
-  let currentMonth = new Date();
-  currentMonth.setMonth(9); // Октябрь
-  currentMonth.setDate(1);
+  const now = new Date();
+  const endDate = new Date(now.getFullYear() + 1, now.getMonth(), 1); // Через год от текущего месяца
   
-  for (let i = 0; i < 13; i++) {
+  let currentMonth = new Date(2025, 5, 1); // Июнь 2025 (месяц 5 = июнь)
+  
+  // Показываем месяцы от июня 2025 до конца года от текущего месяца
+  while (currentMonth < endDate) {
     const monthKey = currentMonth.toISOString().substring(0, 7); // YYYY-MM
     const monthLabel = currentMonth.toLocaleDateString('ru-RU', { 
       month: 'long', 

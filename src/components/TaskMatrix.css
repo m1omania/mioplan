@@ -36,11 +36,15 @@
 .type-header {
   width: 150px;
   background-color: #e9ecef;
+  position: sticky;
+  left: 0;
+  z-index: 20 !important;
 }
 
 .month-header {
   width: 100px;
   background-color: #e9ecef;
+  z-index: 5 !important; /* Ниже зафиксированных колонок */
 }
 
 .task-matrix td {
@@ -54,6 +58,9 @@
   background-color: #f8f9fa;
   width: 150px;
   vertical-align: top;
+  position: sticky;
+  left: 0;
+  z-index: 15;
 }
 
 .month-cell {
@@ -61,6 +68,7 @@
   width: 100px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  z-index: 5; /* Ниже зафиксированных колонок */
 }
 
 .month-cell:hover {

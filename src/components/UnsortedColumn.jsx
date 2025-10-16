@@ -3,12 +3,14 @@ import './UnsortedColumn.css';
 
 const UnsortedColumn = ({ tasks, onTaskUpdate }) => {
   const [isDragOver, setIsDragOver] = useState(false);
+  
   // Фильтруем неразобранные задачи
   const undefinedTasks = tasks.filter(task => 
     !task.importance || !task.complexity || 
     task.importance === 'undefined' || task.complexity === 'undefined' ||
     task.importance === null || task.complexity === null
   );
+
 
   const handleDragStart = (e, task) => {
     e.dataTransfer.setData('application/json', JSON.stringify(task));
