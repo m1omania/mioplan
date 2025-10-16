@@ -45,6 +45,7 @@
 .unsorted-cell {
   background-color: #f8f9fa;
   width: 200px;
+  vertical-align: top;
 }
 
 .type-cell {
@@ -71,8 +72,9 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  max-height: 200px;
+  height: calc(100vh - 120px);
   overflow-y: auto;
+  padding: 8px;
 }
 
 .task-item {

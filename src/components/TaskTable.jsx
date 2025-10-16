@@ -92,25 +92,47 @@ const TaskTable = ({ tasks, onTaskUpdate }) => {
           </tr>
         </thead>
         <tbody>
-          {taskTypes.map((type, index) => (
-            <tr key={type.id}>
-              <td className="unsorted-cell">
-                {index === 0 && (
-                  <div className="unsorted-tasks">
-                    {undefinedTasks.map(task => (
-                      <div
-                        key={task.id}
-                        className="task-item"
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, task)}
-                        title={task.description || task.title}
-                      >
-                        {task.title}
-                      </div>
-                    ))}
+          <tr>
+            <td className="unsorted-cell" rowSpan={taskTypes.length}>
+              <div className="unsorted-tasks">
+                {undefinedTasks.map(task => (
+                  <div
+                    key={task.id}
+                    className="task-item"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task)}
+                    title={task.description || task.title}
+                  >
+                    {task.title}
                   </div>
-                )}
+                ))}
+              </div>
+            </td>
+            <td className="type-cell">
+              <div className="type-item" style={{ borderLeftColor: taskTypes[0].color }}>
+                <div className="type-color" style={{ backgroundColor: taskTypes[0].color }} />
+                <span className="type-label">{taskTypes[0].label}</span>
+              </div>
+            </td>
+            {months.map(month => (
+              <td 
+                key={month.key} 
+                className="month-cell"
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, taskTypes[0].id, month.key)}
+              >
+                <div className="month-tasks">
+                  {getTasksForTypeAndMonth(taskTypes[0].id, month.key).map(task => (
+                    <div key={task.id} className="task-item placed">
+                      {task.title}
+                    </div>
+                  ))}
+                </div>
               </td>
+            ))}
+          </tr>
+          {taskTypes.slice(1).map((type) => (
+            <tr key={type.id}>
               <td className="type-cell">
                 <div className="type-item" style={{ borderLeftColor: type.color }}>
                   <div className="type-color" style={{ backgroundColor: type.color }} />
