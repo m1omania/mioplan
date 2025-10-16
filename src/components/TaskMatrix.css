@@ -60,6 +60,13 @@
   transition: width 0.3s ease, font-size 0.3s ease;
 }
 
+/* Стили для годовых колонок */
+.month-header[data-type="year"] {
+  background-color: #d1ecf1;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .task-matrix td {
   border: 1px solid #dee2e6;
   padding: 8px;

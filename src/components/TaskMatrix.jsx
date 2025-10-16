@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import './TaskMatrix.css';
 
 const TaskMatrix = ({ tasks, onTaskUpdate }) => {
-  const [zoomLevel, setZoomLevel] = useState(1); // Плавный зум от 1 до 3
+  const [zoomLevel, setZoomLevel] = useState(1); // Плавный зум от 0.5 до 3.5
   const matrixRef = useRef(null);
 
   // Фильтруем классифицированные задачи
@@ -32,7 +32,7 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
       const delta = e.deltaY > 0 ? -0.1 : 0.1;
       setZoomLevel(prev => {
         const newLevel = prev + delta;
-        return Math.max(1, Math.min(3, newLevel)); // Плавный зум от 1 до 3
+        return Math.max(0.5, Math.min(3.5, newLevel)); // Плавный зум от 0.5 до 3.5
       });
     }
   };
@@ -44,11 +44,26 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
     currentDate.setMonth(9); // Октябрь
     currentDate.setDate(1);
     
-    // Количество месяцев для отображения (уменьшается при зуме)
-    const monthsToShow = Math.max(1, Math.floor(13 / zoomLevel));
+    // Количество периодов для отображения (уменьшается при зуме)
+    const periodsToShow = Math.max(1, Math.floor(13 / zoomLevel));
     
-    for (let i = 0; i < monthsToShow; i++) {
-      if (zoomLevel <= 1.5) {
+    for (let i = 0; i < periodsToShow; i++) {
+      if (zoomLevel <= 0.8) {
+        // Годовой вид (0.5 - 0.8)
+        const yearKey = currentDate.getFullYear().toString();
+        const yearLabel = currentDate.getFullYear().toString();
+        
+        columns.push({
+          key: yearKey,
+          label: yearLabel,
+          start: new Date(currentDate.getFullYear(), 0, 1),
+          end: new Date(currentDate.getFullYear(), 11, 31, 23, 59, 59),
+          type: 'year',
+          width: Math.max(120, 300 / zoomLevel)
+        });
+        
+        currentDate.setFullYear(currentDate.getFullYear() + 1);
+      } else if (zoomLevel <= 1.5) {
         // Месячный вид (1.0 - 1.5)
         const monthKey = currentDate.toISOString().substring(0, 7);
         const monthLabel = currentDate.toLocaleDateString('ru-RU', { 
@@ -173,7 +188,11 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
     <div className="task-matrix" ref={matrixRef} onWheel={handleWheel}>
       <div className="matrix-container">
         <div className="zoom-indicator">
-          Зум: {zoomLevel.toFixed(1)}x - {zoomLevel <= 1.5 ? 'Месяцы' : zoomLevel <= 2.5 ? 'Недели' : 'Дни'} 
+          Зум: {zoomLevel.toFixed(1)}x - {
+            zoomLevel <= 0.8 ? 'Годы' : 
+            zoomLevel <= 1.5 ? 'Месяцы' : 
+            zoomLevel <= 2.5 ? 'Недели' : 'Дни'
+          } 
           (Ctrl + колесо мыши)
         </div>
         <table>
@@ -184,6 +203,7 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
                 <th 
                   key={column.key} 
                   className="month-header"
+                  data-type={column.type}
                   style={{ width: `${column.width}px` }}
                 >
                   {column.label}
