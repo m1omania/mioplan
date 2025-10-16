@@ -104,8 +104,13 @@ body {
   }
 }
 
-/* Timeline wrapper */
-.timeline-wrapper {
+/* Timeline styles */
+
+/* Стили для react-calendar-timeline */
+.react-calendar-timeline {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -114,15 +119,6 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.2);
   flex: 1;
   min-width: 0;
-  overflow: hidden;
-  overflow-x: hidden;
-}
-
-/* Стили для react-calendar-timeline */
-.react-calendar-timeline {
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow: hidden !important;
 }
 
 .react-calendar-timeline .rct-scroll {
@@ -241,7 +237,7 @@ body {
     padding: 1rem;
   }
   
-  .timeline-wrapper {
+  .react-calendar-timeline {
     padding: 1rem;
   }
 }

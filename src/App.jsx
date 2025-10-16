@@ -112,12 +112,10 @@ function App() {
                     tasks={tasks} 
                     onTaskUpdate={handleTaskUpdate}
                   />
-                  <div className="timeline-wrapper">
-                    <Timeline 
-                      tasks={tasks} 
-                      onTaskUpdate={handleTaskUpdate}
-                    />
-                  </div>
+                  <Timeline 
+                    tasks={tasks} 
+                    onTaskUpdate={handleTaskUpdate}
+                  />
                 </div>
               </main>
             </div>
