@@ -39,7 +39,7 @@
   background-color: #e9ecef;
   position: sticky;
   left: 0;
-  z-index: 20;
+  z-index: 30;
 }
 
 .type-header {
@@ -47,7 +47,7 @@
   background-color: #e9ecef;
   position: sticky;
   left: 200px;
-  z-index: 20;
+  z-index: 30;
 }
 
 .month-header {
@@ -68,7 +68,7 @@
   vertical-align: top;
   position: sticky;
   left: 0;
-  z-index: 15;
+  z-index: 25;
 }
 
 .type-cell {
@@ -76,7 +76,7 @@
   width: 150px;
   position: sticky;
   left: 200px;
-  z-index: 15;
+  z-index: 25;
 }
 
 .month-cell {
