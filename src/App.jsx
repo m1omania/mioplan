@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import TaskTable from './components/TaskTable';
+import UnsortedColumn from './components/UnsortedColumn';
+import TaskMatrix from './components/TaskMatrix';
 import './App.css';
 
 function App() {
@@ -101,7 +102,11 @@ function App() {
 
           return (
             <div className="app">
-              <TaskTable 
+              <UnsortedColumn 
+                tasks={tasks} 
+                onTaskUpdate={handleTaskUpdate}
+              />
+              <TaskMatrix 
                 tasks={tasks} 
                 onTaskUpdate={handleTaskUpdate}
               />
