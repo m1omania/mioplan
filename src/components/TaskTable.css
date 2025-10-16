@@ -37,19 +37,22 @@
 .unsorted-header {
   width: 200px;
   background-color: #e9ecef;
-  position: sticky;
+  position: fixed;
   left: 0;
-  z-index: 30; /* Самый высокий z-index для заголовка первой колонки */
+  top: 0;
+  z-index: 100; /* Очень высокий z-index для фиксированного заголовка */
 }
 
 .type-header {
   width: 150px;
   background-color: #e9ecef;
+  margin-left: 200px; /* Отступ для фиксированной первой колонки */
 }
 
 .month-header {
   width: 100px; /* Фиксированная ширина для каждой колонки месяца */
   background-color: #e9ecef;
+  margin-left: 350px; /* Отступ для фиксированной первой колонки (200px) + второй колонки (150px) */
 }
 
 .task-table td {
@@ -63,20 +66,23 @@
   background-color: #f8f9fa;
   width: 200px;
   vertical-align: top;
-  position: sticky;
+  position: fixed;
   left: 0;
-  z-index: 25; /* Высокий z-index для ячеек первой колонки */
+  top: 60px; /* Под заголовком */
+  z-index: 90; /* Высокий z-index для фиксированных ячеек */
 }
 
 .type-cell {
   background-color: #f8f9fa;
   width: 150px;
+  margin-left: 200px; /* Отступ для фиксированной первой колонки */
 }
 
 .month-cell {
   background-color: #ffffff;
   width: 100px; /* Фиксированная ширина для каждой ячейки месяца */
   z-index: 5; /* Ниже зафиксированной первой колонки */
+  margin-left: 350px; /* Отступ для фиксированной первой колонки (200px) + второй колонки (150px) */
 }
 
 /* Отступ между первой и второй колонкой */
