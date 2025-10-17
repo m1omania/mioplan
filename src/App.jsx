@@ -18,14 +18,29 @@ function App() {
       setLoading(true);
       setError(null);
       
-      // Загружаем задачи из Kaiten через наш API
-      const response = await fetch('/api/tasks');
-      if (!response.ok) {
-        throw new Error('Failed to load tasks');
-      }
+      // Сначала пытаемся загрузить из Kaiten API с данными по умолчанию
+      const kaitenParams = new URLSearchParams({
+        base_url: 'https://solargroup.kaiten.ru',
+        api_key: 'b1363503-1a24-4f26-8400-8256673eb965',
+        board_id: '1514460'
+      });
       
-      const data = await response.json();
-      setTasks(data);
+      const kaitenResponse = await fetch(`/api/kaiten/cards?${kaitenParams}`);
+      
+      if (kaitenResponse.ok) {
+        const kaitenTasks = await kaitenResponse.json();
+        console.log('Loaded tasks from Kaiten:', kaitenTasks.length);
+        setTasks(kaitenTasks);
+      } else {
+        // Если Kaiten недоступен, загружаем локально сохраненные задачи
+        const response = await fetch('/api/tasks');
+        if (!response.ok) {
+          throw new Error('Failed to load tasks');
+        }
+        
+        const data = await response.json();
+        setTasks(data);
+      }
     } catch (err) {
       console.error('Error loading tasks:', err);
       setError(err.message);
@@ -45,20 +60,7 @@ function App() {
         complexity: updatedTask.complexity
       });
 
-      // Обновляем задачу на сервере
-      const response = await fetch(`/api/tasks/${updatedTask.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedTask),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update task');
-      }
-
-      // Обновляем локальное состояние
+      // Обновляем только локальное состояние (данные из Kaiten не сохраняем)
       setTasks(prevTasks => {
         const newTasks = prevTasks.map(task => 
           task.id === updatedTask.id ? updatedTask : task
@@ -71,6 +73,42 @@ function App() {
       setError(err.message);
     }
   };
+
+  // Функция для сброса всех задач в "Неразобранное"
+  const resetAllTasksToUnsorted = async () => {
+    try {
+      console.log('App: Resetting all tasks to unsorted');
+      
+      // Обновляем все задачи локально
+      const updatedTasks = tasks.map(task => ({
+        ...task,
+        importance: null,
+        complexity: null,
+        startDate: null,
+        endDate: null
+      }));
+
+      setTasks(updatedTasks);
+
+      // Обновляем задачи на сервере
+      const updatePromises = updatedTasks.map(task => 
+        fetch(`/api/tasks/${task.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(task),
+        })
+      );
+
+      await Promise.all(updatePromises);
+      console.log('App: All tasks reset to unsorted');
+    } catch (err) {
+      console.error('Error resetting tasks:', err);
+      setError(err.message);
+    }
+  };
+
 
   if (loading) {
     return (
@@ -102,6 +140,15 @@ function App() {
 
           return (
             <div className="app">
+              <div className="app-header">
+                <button 
+                  onClick={resetAllTasksToUnsorted}
+                  className="reset-button"
+                  title="Переместить все задачи в Неразобранное"
+                >
+                  Сбросить все задачи
+                </button>
+              </div>
               <UnsortedColumn 
                 tasks={tasks} 
                 onTaskUpdate={handleTaskUpdate}
