@@ -23,28 +23,6 @@ body {
   flex-direction: column;
 }
 
-.app-header {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 100;
-}
-
-.reset-button {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.reset-button:hover {
-  background-color: #c82333;
-}
 
 .kaiten-button {
   background-color: #28a745;

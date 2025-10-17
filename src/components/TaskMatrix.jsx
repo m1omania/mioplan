@@ -4,6 +4,7 @@ import './TaskMatrix.css';
 const TaskMatrix = ({ tasks, onTaskUpdate }) => {
   const [timeScale, setTimeScale] = useState('days');
   const [hoverZone, setHoverZone] = useState(null); // { typeId, periodKey, date, x, width } // 'days', 'weeks', 'months'
+  const [focusedDate, setFocusedDate] = useState(new Date()); // Центральная дата для сохранения фокуса
   const pxPerDay = 80; // базовый масштаб
   const pxPerWeek = 120; // масштаб для недель
   const pxPerMonth = 200; // масштаб для месяцев
@@ -16,6 +17,73 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
     if (timeScale === 'months') return pxPerMonth;
     return pxPerDay;
   };
+
+  // Функция для обновления фокуса при скролле
+  const updateFocusedDate = () => {
+    if (!trackRef.current) return;
+    
+    const container = trackRef.current;
+    const containerWidth = container.clientWidth;
+    const scrollLeft = container.scrollLeft;
+    const centerX = scrollLeft + containerWidth / 2;
+    
+    // Вычисляем дату в центре экрана
+    let centerDate;
+    if (timeScale === 'days') {
+      const dayIndex = Math.floor(centerX / pxPerDay);
+      centerDate = new Date(visibleStart);
+      centerDate.setDate(centerDate.getDate() + dayIndex);
+    } else if (timeScale === 'weeks') {
+      const weekIndex = Math.floor(centerX / pxPerWeek);
+      const weekStart = new Date(visibleStart);
+      const dayOfWeek = weekStart.getDay();
+      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      weekStart.setDate(weekStart.getDate() + mondayOffset);
+      centerDate = new Date(weekStart);
+      centerDate.setDate(centerDate.getDate() + weekIndex * 7);
+    } else if (timeScale === 'months') {
+      const monthIndex = Math.floor(centerX / pxPerMonth);
+      centerDate = new Date(visibleStart.getFullYear(), visibleStart.getMonth() + monthIndex, 1);
+    }
+    
+    if (centerDate) {
+      setFocusedDate(centerDate);
+    }
+  };
+
+  // Функция для переключения режима с сохранением фокуса
+  const changeTimeScale = (newScale) => {
+    const currentFocusedDate = focusedDate;
+    setTimeScale(newScale);
+    
+    // После изменения режима прокручиваем к сохраненной дате
+    setTimeout(() => {
+      if (!trackRef.current) return;
+      
+      let targetX = 0;
+      if (newScale === 'days') {
+        const daysDiff = Math.floor((currentFocusedDate - visibleStart) / (1000 * 60 * 60 * 24));
+        targetX = daysDiff * pxPerDay;
+      } else if (newScale === 'weeks') {
+        const weekStart = new Date(visibleStart);
+        const dayOfWeek = weekStart.getDay();
+        const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+        weekStart.setDate(weekStart.getDate() + mondayOffset);
+        const weeksDiff = Math.floor((currentFocusedDate - weekStart) / (1000 * 60 * 60 * 24 * 7));
+        targetX = weeksDiff * pxPerWeek;
+      } else if (newScale === 'months') {
+        const monthsDiff = (currentFocusedDate.getFullYear() - visibleStart.getFullYear()) * 12 + 
+                          (currentFocusedDate.getMonth() - visibleStart.getMonth());
+        targetX = monthsDiff * pxPerMonth;
+      }
+      
+      // Прокручиваем к целевой позиции
+      const container = trackRef.current;
+      const containerWidth = container.clientWidth;
+      const scrollLeft = targetX - containerWidth / 2;
+      container.scrollLeft = Math.max(0, scrollLeft);
+    }, 50);
+  };
   // Фильтруем классифицированные задачи
   const classifiedTasks = tasks.filter(task => 
     task.importance && task.complexity && 
@@ -23,17 +91,17 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
     task.importance !== null && task.complexity !== null
   );
 
-  // Типы задач для таблицы
+  // Типы задач для таблицы с уникальными цветами
   const taskTypes = [
-    { id: 'high-high', label: 'Важно/Сложно', color: '#ef4444' },
-    { id: 'high-medium', label: 'Важно/Средне', color: '#f97316' },
-    { id: 'high-low', label: 'Важно/Просто', color: '#eab308' },
-    { id: 'medium-high', label: 'Средне/Сложно', color: '#3b82f6' },
-    { id: 'medium-medium', label: 'Средне/Средне', color: '#6366f1' },
-    { id: 'medium-low', label: 'Средне/Просто', color: '#8b5cf6' },
-    { id: 'low-high', label: 'Минимум/Сложно', color: '#22c55e' },
-    { id: 'low-medium', label: 'Минимум/Средне', color: '#22c55e' },
-    { id: 'low-low', label: 'Минимум/Просто', color: '#22c55e' }
+    { id: 'high-high', label: 'Важно/Сложно', color: '#dc2626' }, // Красный - критично
+    { id: 'high-medium', label: 'Важно/Средне', color: '#ea580c' }, // Оранжевый - срочно
+    { id: 'high-low', label: 'Важно/Просто', color: '#d97706' }, // Янтарный - важно
+    { id: 'medium-high', label: 'Средне/Сложно', color: '#2563eb' }, // Синий - сложно
+    { id: 'medium-medium', label: 'Средне/Средне', color: '#7c3aed' }, // Фиолетовый - обычное
+    { id: 'medium-low', label: 'Средне/Просто', color: '#0891b2' }, // Голубой - простое
+    { id: 'low-high', label: 'Минимум/Сложно', color: '#059669' }, // Зеленый - низкий приоритет
+    { id: 'low-medium', label: 'Минимум/Средне', color: '#16a34a' }, // Светло-зеленый
+    { id: 'low-low', label: 'Минимум/Просто', color: '#22c55e' } // Ярко-зеленый - минимальный
   ];
 
   // Дни диапазона: от 2025-06-01 до конца месяца через год от сегодня
@@ -503,51 +571,30 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
             <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#495057' }}>Важность</div>
           </div>
         </div>
-        <div className="time-scale-controls">
-          <button 
-            onClick={() => setTimeScale('days')}
-            style={{ 
-              background: timeScale === 'days' ? '#007bff' : '#f8f9fa',
-              color: timeScale === 'days' ? 'white' : '#495057',
-              border: '1px solid #dee2e6',
-              padding: '4px 8px',
-              margin: '2px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Дни
-          </button>
-          <button 
-            onClick={() => setTimeScale('weeks')}
-            style={{ 
-              background: timeScale === 'weeks' ? '#007bff' : '#f8f9fa',
-              color: timeScale === 'weeks' ? 'white' : '#495057',
-              border: '1px solid #dee2e6',
-              padding: '4px 8px',
-              margin: '2px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Недели
-          </button>
-          <button 
-            onClick={() => setTimeScale('months')}
-            style={{ 
-              background: timeScale === 'months' ? '#007bff' : '#f8f9fa',
-              color: timeScale === 'months' ? 'white' : '#495057',
-              border: '1px solid #dee2e6',
-              padding: '4px 8px',
-              margin: '2px',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Месяцы
-          </button>
+        {/* Вертикальный переключатель режимов времени */}
+        <div className="time-scale-controls-vertical">
+          <div className="segmented-control">
+            <button 
+              onClick={() => changeTimeScale('days')}
+              className={`segment ${timeScale === 'days' ? 'active' : ''}`}
+            >
+              Д
+            </button>
+            <button 
+              onClick={() => changeTimeScale('weeks')}
+              className={`segment ${timeScale === 'weeks' ? 'active' : ''}`}
+            >
+              Н
+            </button>
+            <button 
+              onClick={() => changeTimeScale('months')}
+              className={`segment ${timeScale === 'months' ? 'active' : ''}`}
+            >
+              М
+            </button>
+          </div>
         </div>
-        <div className="lanes" ref={trackRef}>
+        <div className="lanes" ref={trackRef} onScroll={updateFocusedDate}>
           <div className="timeline-content" style={{ width: (timeScale === 'weeks' ? weeks.length * pxPerWeek : timeScale === 'months' ? months.length * pxPerMonth : days.length * pxPerDay) + 140 }}>
             <div className="day-header">
               <div className="lane-label" style={{ width: 140 }} />
@@ -587,7 +634,16 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
             </div>
           {taskTypes.map((type) => (
             <div key={type.id} className="lane" style={{ minHeight: getLaneHeight(type.id) }}>
-              <div className="lane-label">{type.label}</div>
+              <div 
+                className="lane-label"
+                style={{
+                  backgroundColor: type.color + '20', // полупрозрачный фон
+                  color: type.color,
+                  fontWeight: 'bold'
+                }}
+              >
+                {type.label}
+              </div>
               <div 
                 className="lane-track"
                 style={{ 
@@ -632,30 +688,40 @@ const TaskMatrix = ({ tasks, onTaskUpdate }) => {
                   }
                 }}
               >
-                {getTasksForLane(type.id).map(task => (
-                  <div
-                    key={task.id}
-                    className="task-bar"
-                    draggable
-                    onDragStart={(e) => handleTaskDragStart(e, task)}
-                    onDragEnd={handleDragEnd}
-                    title={task.description || task.title}
-                    style={{
-                      left: xFromDate(task.startDate),
-                      width: widthFromRange(task.startDate, task.endDate),
-                      top: 8 + (task.verticalPosition || 0) * 28 // вертикальное смещение (24px высота + 4px отступ)
-                    }}
-                  >
-                    <div className="task-bar-content">{task.title}</div>
-                    <span 
-                      className="resize-handle" 
-                      onMouseDown={(ev) => {
-                        ev.stopPropagation();
-                        startRightResize(ev, task);
+                {getTasksForLane(type.id).map(task => {
+                  // Находим цвет для типа задачи
+                  const taskType = taskTypes.find(t => t.id === type.id);
+                  const taskColor = taskType ? taskType.color : '#d4edda';
+                  
+                  return (
+                    <div
+                      key={task.id}
+                      className="task-bar"
+                      draggable
+                      onDragStart={(e) => handleTaskDragStart(e, task)}
+                      onDragEnd={handleDragEnd}
+                      title={task.description || task.title}
+                      style={{
+                        left: xFromDate(task.startDate),
+                        width: widthFromRange(task.startDate, task.endDate),
+                        top: 8 + (task.verticalPosition || 0) * 28, // вертикальное смещение (24px высота + 4px отступ)
+                        backgroundColor: taskColor,
+                        borderColor: taskColor,
+                        color: '#ffffff',
+                        fontWeight: 'bold'
                       }}
-                    />
-                  </div>
-                ))}
+                    >
+                      <div className="task-bar-content">{task.title}</div>
+                      <span 
+                        className="resize-handle" 
+                        onMouseDown={(ev) => {
+                          ev.stopPropagation();
+                          startRightResize(ev, task);
+                        }}
+                      />
+                    </div>
+                  );
+                })}
               </div>
               {/* Направляющая линия */}
               {hoverZone && hoverZone.typeId === type.id && (

@@ -74,40 +74,6 @@ function App() {
     }
   };
 
-  // Функция для сброса всех задач в "Неразобранное"
-  const resetAllTasksToUnsorted = async () => {
-    try {
-      console.log('App: Resetting all tasks to unsorted');
-      
-      // Обновляем все задачи локально
-      const updatedTasks = tasks.map(task => ({
-        ...task,
-        importance: null,
-        complexity: null,
-        startDate: null,
-        endDate: null
-      }));
-
-      setTasks(updatedTasks);
-
-      // Обновляем задачи на сервере
-      const updatePromises = updatedTasks.map(task => 
-        fetch(`/api/tasks/${task.id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(task),
-        })
-      );
-
-      await Promise.all(updatePromises);
-      console.log('App: All tasks reset to unsorted');
-    } catch (err) {
-      console.error('Error resetting tasks:', err);
-      setError(err.message);
-    }
-  };
 
 
   if (loading) {
@@ -140,15 +106,6 @@ function App() {
 
           return (
             <div className="app">
-              <div className="app-header">
-                <button 
-                  onClick={resetAllTasksToUnsorted}
-                  className="reset-button"
-                  title="Переместить все задачи в Неразобранное"
-                >
-                  Сбросить все задачи
-                </button>
-              </div>
               <UnsortedColumn 
                 tasks={tasks} 
                 onTaskUpdate={handleTaskUpdate}
